@@ -1,4 +1,5 @@
 export type Difficulty = "Easy" | "Medium" | "Hard";
+export type MeasurementSystem = "european" | "american";
 
 export interface Recipe {
   id: string;

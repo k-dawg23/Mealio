@@ -3,7 +3,7 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getCachedRecipes, setCachedRecipes } from "./cache.js";
-import { generateRecipesFromIngredients } from "./openai.js";
+import { generateRecipesFromIngredients, type MeasurementSystem } from "./openai.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 3001);
@@ -26,19 +26,24 @@ function normalizeIngredients(input: unknown) {
   )].sort();
 }
 
+function normalizeMeasurementSystem(input: unknown): MeasurementSystem {
+  return input === "american" ? "american" : "european";
+}
+
 app.get("/api/health", (_request, response) => {
   response.json({ ok: true });
 });
 
 app.post("/api/recipes/suggest", async (request, response) => {
   const ingredients = normalizeIngredients(request.body?.ingredients);
+  const measurementSystem = normalizeMeasurementSystem(request.body?.measurementSystem);
 
   if (ingredients.length === 0) {
     response.status(400).json({ error: "Add at least one ingredient first." });
     return;
   }
 
-  const cacheKey = ingredients.join("|");
+  const cacheKey = `${measurementSystem}:${ingredients.join("|")}`;
 
   try {
     const cached = await getCachedRecipes(cacheKey);
@@ -48,7 +53,7 @@ app.post("/api/recipes/suggest", async (request, response) => {
       return;
     }
 
-    const payload = await generateRecipesFromIngredients(ingredients);
+    const payload = await generateRecipesFromIngredients(ingredients, measurementSystem);
     await setCachedRecipes(cacheKey, payload);
     response.json(payload);
   } catch (error) {

@@ -11,6 +11,7 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - Display recipe cards with title, description, cook time, and difficulty
 - Open a modal for ingredients and step-by-step instructions
 - Bookmark recipes in `localStorage`
+- Default recipe measurements to European format with a user switch for European or American recipe output
 - Cache repeated ingredient combinations on the server to avoid duplicate OpenAI calls
 - Keep the API key server-side only via environment variables
 - Mobile-first UI using the provided Mealio branding assets
@@ -87,3 +88,10 @@ Mealio uses the Responses API with a strict JSON schema so the model returns a s
 - `instructions`
 
 The model request is made server-side only with `gpt-5-nano`.
+
+Mealio also sends the selected recipe measurement preference with each request:
+
+- `European` by default: metric-first amounts using `g` and `kg`, with cups in brackets where helpful, and `C` with `F` in brackets for temperatures
+- `American`: American-style recipe measurements when the user switches formats
+
+The selected format is included in the server cache key so cached European and American responses stay separate.

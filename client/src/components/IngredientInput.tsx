@@ -1,11 +1,15 @@
 import { FormEvent, KeyboardEvent, useState } from "react";
 
+import type { MeasurementSystem } from "../lib/types";
+
 interface IngredientInputProps {
   ingredients: string[];
   onAddIngredient: (ingredient: string) => void;
   onRemoveIngredient: (ingredient: string) => void;
   onSuggestRecipes: () => void;
   isLoading: boolean;
+  measurementSystem: MeasurementSystem;
+  onMeasurementSystemChange: (system: MeasurementSystem) => void;
 }
 
 export function IngredientInput({
@@ -13,7 +17,9 @@ export function IngredientInput({
   onAddIngredient,
   onRemoveIngredient,
   onSuggestRecipes,
-  isLoading
+  isLoading,
+  measurementSystem,
+  onMeasurementSystemChange
 }: IngredientInputProps) {
   const [value, setValue] = useState("");
 
@@ -81,6 +87,26 @@ export function IngredientInput({
             </button>
           ))
         )}
+      </div>
+
+      <div className="format-picker ingredient-format-picker">
+        <p className="eyebrow">Recipe format</p>
+        <div className="segmented-control">
+          <button
+            type="button"
+            className={measurementSystem === "european" ? "active" : ""}
+            onClick={() => onMeasurementSystemChange("european")}
+          >
+            European
+          </button>
+          <button
+            type="button"
+            className={measurementSystem === "american" ? "active" : ""}
+            onClick={() => onMeasurementSystemChange("american")}
+          >
+            American
+          </button>
+        </div>
       </div>
 
       <button

@@ -306,6 +306,15 @@ button {
   align-items: center;
 }
 
+.format-picker {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ingredient-format-picker {
+  margin-bottom: 1rem;
+}
+
 .segmented-control {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -498,6 +507,10 @@ button {
 
   .results-header {
     grid-template-columns: 1fr auto;
+  }
+
+  .ingredient-format-picker {
+    width: min(360px, 100%);
   }
 
   .recipe-grid {
