@@ -2,8 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { IngredientInput } from "./components/IngredientInput";
 import { RecipeCard } from "./components/RecipeCard";
 import { RecipeModal } from "./components/RecipeModal";
-import { loadBookmarks, saveBookmarks } from "./lib/storage";
-import type { Recipe } from "./lib/types";
+import {
+  loadBookmarks,
+  loadMeasurementSystem,
+  saveBookmarks,
+  saveMeasurementSystem
+} from "./lib/storage";
+import type { MeasurementSystem, Recipe } from "./lib/types";
 
 type ViewMode = "suggested" | "saved";
 
@@ -15,10 +20,17 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("suggested");
+  const [measurementSystem, setMeasurementSystem] = useState<MeasurementSystem>(() =>
+    loadMeasurementSystem()
+  );
 
   useEffect(() => {
     saveBookmarks(bookmarks);
   }, [bookmarks]);
+
+  useEffect(() => {
+    saveMeasurementSystem(measurementSystem);
+  }, [measurementSystem]);
 
   const bookmarkedIds = useMemo(
     () => new Set(bookmarks.map((recipe) => recipe.id)),
@@ -40,7 +52,7 @@ export default function App() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ingredients })
+        body: JSON.stringify({ ingredients, measurementSystem })
       });
 
       if (!response.ok) {
@@ -136,6 +148,8 @@ export default function App() {
           onRemoveIngredient={removeIngredient}
           onSuggestRecipes={suggestRecipes}
           isLoading={isLoading}
+          measurementSystem={measurementSystem}
+          onMeasurementSystemChange={setMeasurementSystem}
         />
 
         <section className="results-panel">

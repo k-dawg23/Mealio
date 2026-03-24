@@ -42,3 +42,11 @@
 
 - Switched the recipe request to the SDK parser-backed structured output flow
 - Reduced model reasoning effort and increased the output token budget so `gpt-5-nano` reliably returns the full 4-recipe JSON payload
+
+### Recipe formatting and generation preferences
+
+- Added a recipe format preference with `European` as the default output style
+- Implemented a user-facing European/American format switch in the ingredients panel so measurement preference is chosen before generating recipes
+- Saved the format preference in browser `localStorage` for repeat visits
+- Updated the server request and prompt so OpenAI generates recipes in the selected measurement style
+- Added measurement preference to the cache key so different format variants do not collide
