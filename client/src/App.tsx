@@ -48,6 +48,14 @@ export default function App() {
     for (const [key, recipe] of uniqueRecipes) {
       const currentState = recipeImages[key];
 
+      if (recipe.imageUrl && currentState?.status !== "ready") {
+        setRecipeImages((current) => ({
+          ...current,
+          [key]: { status: "ready", imageUrl: recipe.imageUrl }
+        }));
+        continue;
+      }
+
       if (
         currentState?.status === "loading" ||
         currentState?.status === "ready" ||
@@ -155,6 +163,17 @@ export default function App() {
           ...current,
           [key]: { status: "ready", imageUrl: payload.imageUrl }
         }));
+        setRecipes((current) =>
+          current.map((item) => (getRecipeImageKey(item) === key ? { ...item, imageUrl: payload.imageUrl } : item))
+        );
+        setBookmarks((current) =>
+          current.map((item) => (getRecipeImageKey(item) === key ? { ...item, imageUrl: payload.imageUrl } : item))
+        );
+        setSelectedRecipe((current) =>
+          current && getRecipeImageKey(current) === key
+            ? { ...current, imageUrl: payload.imageUrl }
+            : current
+        );
         return;
       }
 
@@ -277,7 +296,7 @@ export default function App() {
                   key={recipe.id}
                   recipe={recipe}
                   onOpen={setSelectedRecipe}
-                  imageUrl={imageState?.imageUrl}
+                  imageUrl={imageState?.imageUrl ?? recipe.imageUrl}
                   isImageLoading={imageState?.status === "loading"}
                 />
                   );
@@ -292,7 +311,9 @@ export default function App() {
         recipe={selectedRecipe}
         isBookmarked={selectedRecipe ? bookmarkedIds.has(selectedRecipe.id) : false}
         imageUrl={
-          selectedRecipe ? recipeImages[getRecipeImageKey(selectedRecipe)]?.imageUrl : undefined
+          selectedRecipe
+            ? recipeImages[getRecipeImageKey(selectedRecipe)]?.imageUrl ?? selectedRecipe.imageUrl
+            : undefined
         }
         isImageLoading={
           selectedRecipe
