@@ -15,6 +15,12 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - Keep the API key server-side only via environment variables
 - Mobile-first UI using the provided Mealio branding assets
 
+## Branding Assets
+
+- Logo: `client/public/assets/mealio-logo.png`
+- App icon: `client/public/assets/mealio-icon.png`
+- Favicon: `client/public/favicon.ico`
+
 ## Tech Stack
 
 - React + Vite + TypeScript for the frontend
