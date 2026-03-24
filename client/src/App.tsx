@@ -2,13 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { IngredientInput } from "./components/IngredientInput";
 import { RecipeCard } from "./components/RecipeCard";
 import { RecipeModal } from "./components/RecipeModal";
+import { getRecipeImageKey } from "./lib/recipeImageKey";
 import {
   loadBookmarks,
   loadMeasurementSystem,
   saveBookmarks,
   saveMeasurementSystem
 } from "./lib/storage";
-import type { MeasurementSystem, Recipe } from "./lib/types";
+import type { MeasurementSystem, Recipe, RecipeImageState } from "./lib/types";
 
 type ViewMode = "suggested" | "saved";
 
@@ -23,6 +24,7 @@ export default function App() {
   const [measurementSystem, setMeasurementSystem] = useState<MeasurementSystem>(() =>
     loadMeasurementSystem()
   );
+  const [recipeImages, setRecipeImages] = useState<Record<string, RecipeImageState>>({});
 
   useEffect(() => {
     saveBookmarks(bookmarks);
@@ -31,6 +33,37 @@ export default function App() {
   useEffect(() => {
     saveMeasurementSystem(measurementSystem);
   }, [measurementSystem]);
+
+  useEffect(() => {
+    const uniqueRecipes = new Map<string, Recipe>();
+
+    for (const recipe of [...recipes, ...bookmarks]) {
+      uniqueRecipes.set(getRecipeImageKey(recipe), recipe);
+    }
+
+    if (selectedRecipe) {
+      uniqueRecipes.set(getRecipeImageKey(selectedRecipe), selectedRecipe);
+    }
+
+    for (const [key, recipe] of uniqueRecipes) {
+      const currentState = recipeImages[key];
+
+      if (
+        currentState?.status === "loading" ||
+        currentState?.status === "ready" ||
+        currentState?.status === "error"
+      ) {
+        continue;
+      }
+
+      setRecipeImages((current) => ({
+        ...current,
+        [key]: { status: "loading" }
+      }));
+
+      void ensureRecipeImage(recipe, key);
+    }
+  }, [bookmarks, recipeImages, recipes, selectedRecipe]);
 
   const bookmarkedIds = useMemo(
     () => new Set(bookmarks.map((recipe) => recipe.id)),
@@ -96,6 +129,49 @@ export default function App() {
         ? current.filter((item) => item.id !== recipe.id)
         : [recipe, ...current];
     });
+  }
+
+  async function ensureRecipeImage(recipe: Recipe, key: string, attempt = 0): Promise<void> {
+    try {
+      const response = await fetch("/api/recipe-images", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ recipe })
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to prepare recipe image.");
+      }
+
+      const payload = (await response.json()) as {
+        status: "ready" | "pending";
+        imageUrl?: string;
+      };
+
+      if (payload.status === "ready" && payload.imageUrl) {
+        setRecipeImages((current) => ({
+          ...current,
+          [key]: { status: "ready", imageUrl: payload.imageUrl }
+        }));
+        return;
+      }
+
+      if (attempt < 12) {
+        window.setTimeout(() => {
+          void ensureRecipeImage(recipe, key, attempt + 1);
+        }, 1800);
+        return;
+      }
+    } catch {
+      // Fall through to the error state below.
+    }
+
+    setRecipeImages((current) => ({
+      ...current,
+      [key]: { status: "error" }
+    }));
   }
 
   const visibleRecipes = viewMode === "saved" ? bookmarks : recipes;
@@ -193,11 +269,19 @@ export default function App() {
           ) : (
             <div className="recipe-grid">
               {visibleRecipes.map((recipe) => (
+                (() => {
+                  const imageState = recipeImages[getRecipeImageKey(recipe)];
+
+                  return (
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
                   onOpen={setSelectedRecipe}
+                  imageUrl={imageState?.imageUrl}
+                  isImageLoading={imageState?.status === "loading"}
                 />
+                  );
+                })()
               ))}
             </div>
           )}
@@ -207,6 +291,14 @@ export default function App() {
       <RecipeModal
         recipe={selectedRecipe}
         isBookmarked={selectedRecipe ? bookmarkedIds.has(selectedRecipe.id) : false}
+        imageUrl={
+          selectedRecipe ? recipeImages[getRecipeImageKey(selectedRecipe)]?.imageUrl : undefined
+        }
+        isImageLoading={
+          selectedRecipe
+            ? recipeImages[getRecipeImageKey(selectedRecipe)]?.status === "loading"
+            : false
+        }
         onClose={() => setSelectedRecipe(null)}
         onToggleBookmark={toggleBookmark}
       />

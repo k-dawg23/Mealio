@@ -1,5 +1,6 @@
 export type Difficulty = "Easy" | "Medium" | "Hard";
 export type MeasurementSystem = "european" | "american";
+export type RecipeImageStatus = "idle" | "loading" | "ready" | "error";
 
 export interface Recipe {
   id: string;
@@ -9,4 +10,9 @@ export interface Recipe {
   difficulty: Difficulty;
   ingredients: string[];
   instructions: string[];
+}
+
+export interface RecipeImageState {
+  status: RecipeImageStatus;
+  imageUrl?: string;
 }

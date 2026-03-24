@@ -1,8 +1,11 @@
 import type { Recipe } from "../lib/types";
+import { RecipeImage } from "./RecipeImage";
 
 interface RecipeModalProps {
   recipe: Recipe | null;
   isBookmarked: boolean;
+  imageUrl?: string;
+  isImageLoading: boolean;
   onClose: () => void;
   onToggleBookmark: (recipe: Recipe) => void;
 }
@@ -10,6 +13,8 @@ interface RecipeModalProps {
 export function RecipeModal({
   recipe,
   isBookmarked,
+  imageUrl,
+  isImageLoading,
   onClose,
   onToggleBookmark
 }: RecipeModalProps) {
@@ -41,6 +46,7 @@ export function RecipeModal({
         <p className="eyebrow">Recipe details</p>
         <h2 id="recipe-modal-title">{recipe.title}</h2>
         <p className="modal-description">{recipe.description}</p>
+        <RecipeImage title={recipe.title} imageUrl={imageUrl} isLoading={isImageLoading} />
 
         <div className="modal-grid">
           <section>
