@@ -3,6 +3,8 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getCachedRecipes, setCachedRecipes } from "./cache.js";
+import { generatedImagesDir } from "./imageCache.js";
+import { ensureRecipeImage } from "./imageGeneration.js";
 import { generateRecipesFromIngredients, type MeasurementSystem } from "./openai.js";
 
 const app = express();
@@ -13,6 +15,7 @@ const currentDir = path.dirname(currentFile);
 const clientDistPath = path.resolve(currentDir, "../client");
 
 app.use(express.json());
+app.use("/generated-images", express.static(generatedImagesDir));
 
 function normalizeIngredients(input: unknown) {
   if (!Array.isArray(input)) {
@@ -59,6 +62,17 @@ app.post("/api/recipes/suggest", async (request, response) => {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to generate recipes right now.";
+    response.status(500).json({ error: message });
+  }
+});
+
+app.post("/api/recipe-images", async (request, response) => {
+  try {
+    const payload = await ensureRecipeImage(request.body?.recipe);
+    response.json(payload);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unable to generate recipe image right now.";
     response.status(500).json({ error: message });
   }
 });

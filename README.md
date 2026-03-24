@@ -12,6 +12,7 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - Open a modal for ingredients and step-by-step instructions
 - Bookmark recipes in `localStorage`
 - Default recipe measurements to European format with a user switch for European or American recipe output
+- Generate recipe photos in the background with loading placeholders, then reuse cached images on later views
 - Cache repeated ingredient combinations on the server to avoid duplicate OpenAI calls
 - Keep the API key server-side only via environment variables
 - Mobile-first UI using the provided Mealio branding assets
@@ -27,7 +28,8 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - React + Vite + TypeScript for the frontend
 - Express + TypeScript for the backend
 - OpenAI Responses API with structured JSON schema output
-- Persistent JSON file cache at `server/data/recipe-cache.json`
+- OpenAI image generation with `gpt-image-1-mini`
+- Persistent JSON file caches at `server/data/recipe-cache.json` and `server/data/recipe-image-cache.json`
 
 ## Getting Started
 
@@ -72,7 +74,9 @@ The production server serves the built frontend from `dist/client` and exposes t
 
 - Keep `OPENAI_API_KEY` in the hosting platform environment settings, never in frontend code.
 - Ensure the hosting environment allows Node.js 20+.
-- The recipe cache is stored in `server/data/recipe-cache.json`. If the host has ephemeral storage, cache persistence may reset between deployments or restarts.
+- Recipe data is cached in `server/data/recipe-cache.json`.
+- Generated recipe image metadata is cached in `server/data/recipe-image-cache.json`, and the image files are stored in `server/data/generated-images/`.
+- If the host has ephemeral storage, recipe and image caches may reset between deployments or restarts.
 - A GitHub repository can be created from this folder once network access and Git credentials are available.
 
 ## OpenAI Integration
@@ -95,3 +99,12 @@ Mealio also sends the selected recipe measurement preference with each request:
 - `American`: American-style recipe measurements when the user switches formats
 
 The selected format is included in the server cache key so cached European and American responses stay separate.
+
+## Recipe Images
+
+Mealio generates a food photo for each recipe on the server using `gpt-image-1-mini`.
+
+- Recipe cards appear immediately without waiting for image generation.
+- A loading placeholder is shown while each image is being created.
+- Generated images are reused across recipe suggestions, bookmarks, and the recipe details modal.
+- Image requests are cached so the same recipe does not trigger another generation call.

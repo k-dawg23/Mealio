@@ -50,3 +50,12 @@
 - Saved the format preference in browser `localStorage` for repeat visits
 - Updated the server request and prompt so OpenAI generates recipes in the selected measurement style
 - Added measurement preference to the cache key so different format variants do not collide
+
+### Recipe images
+
+- Added background recipe image generation using OpenAI `gpt-image-1-mini`
+- Implemented non-blocking client image loading so recipe cards appear immediately while images generate in the background
+- Added loading placeholders that swap to generated food photography when ready
+- Reused generated images across suggested recipes, bookmarked recipes, and the recipe details modal
+- Added persistent image cache metadata plus generated image file storage on the server
+- Added Vite dev-server proxy support for `/generated-images` so cached images load correctly during local development
