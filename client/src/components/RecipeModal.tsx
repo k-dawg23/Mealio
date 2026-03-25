@@ -23,6 +23,7 @@ interface RecipeModalProps {
     imageLoadingLabel: string;
     imageUnavailableTitle: string;
     imageUnavailableCopy: string;
+    imageUnavailableDetail: string;
     imageRetry: string;
   };
 }

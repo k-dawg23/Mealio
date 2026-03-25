@@ -43,6 +43,12 @@ export interface TranslationSet {
   removeBookmark: string;
   saveRecipe: string;
   extraIngredientsAria: string;
+  extraIngredientsLabel: string;
+  extraIngredientsHint: string;
+  noExtraIngredientsLabel: string;
+  pantryStaplesNote: string;
+  recipeTrustTitle: string;
+  recipeTrustCopy: string;
   recentSearchesLabel: string;
   recentSearchesCopy: string;
   recentSearchesEmpty: string;
@@ -60,10 +66,12 @@ export interface TranslationSet {
   resultsErrorCopy: string;
   resultsRetry: string;
   resultsStaleError: string;
+  resultsErrorDetailLabel: string;
   recipesLoadedAnnouncement: string;
   imageLoadingLabel: string;
   imageUnavailableTitle: string;
   imageUnavailableCopy: string;
+  imageUnavailableDetail: string;
   imageRetry: string;
   modalDialogLabel: string;
   fetchError: string;

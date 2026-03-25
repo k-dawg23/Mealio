@@ -15,7 +15,11 @@ interface RecipeCardProps {
     imageLoadingLabel: string;
     imageUnavailableTitle: string;
     imageUnavailableCopy: string;
+    imageUnavailableDetail: string;
     imageRetry: string;
+    extraIngredientsLabel: string;
+    extraIngredientsHint: string;
+    noExtraIngredientsLabel: string;
   };
 }
 
@@ -52,14 +56,20 @@ export function RecipeCard({
         <h3>{recipe.title}</h3>
         <p>{recipe.description}</p>
         {extraIngredients.length > 0 ? (
-          <div className="extra-ingredients" aria-label={extraIngredientsAria}>
-            {extraIngredients.map((ingredient) => (
-              <span key={ingredient} className="extra-ingredient-badge">
-                {ingredient}
-              </span>
-            ))}
+          <div className="extra-ingredients-wrap">
+            <p className="extra-ingredients-label">{copy.extraIngredientsLabel}</p>
+            <div className="extra-ingredients" aria-label={extraIngredientsAria}>
+              {extraIngredients.map((ingredient) => (
+                <span key={ingredient} className="extra-ingredient-badge">
+                  {ingredient}
+                </span>
+              ))}
+            </div>
+            <p className="extra-ingredients-hint">{copy.extraIngredientsHint}</p>
           </div>
-        ) : null}
+        ) : (
+          <p className="extra-ingredients-clear">{copy.noExtraIngredientsLabel}</p>
+        )}
       </button>
     </article>
   );

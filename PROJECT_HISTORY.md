@@ -141,6 +141,12 @@
 - Added lightweight unit tests for ingredient comparison, recipe identity, bookmark-storage migration, recent-search migration, and language defaults
 - Added structured JSON logging hooks on the server for recipe generation, cache hits, image preparation, failures, and startup events
 
+### Phase 5 enhancements
+
+- Added in-app explanation for extra-ingredient matching so users can see how shopping badges are calculated
+- Made pantry-staple assumptions explicit in the suggestions view and clearer on recipe cards when no extra shopping is needed
+- Improved generation-failure transparency with friendlier recipe-error messaging, optional technical detail, and clearer image-fallback explanation
+
 ### Recipe images
 
 - Added background recipe image generation using OpenAI `gpt-image-1-mini`

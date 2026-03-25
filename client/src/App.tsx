@@ -110,6 +110,7 @@ export default function App() {
   const showSuggestionsLoadingState = viewMode === "suggested" && isLoading && recipes.length === 0;
   const showSuggestionsErrorState = viewMode === "suggested" && !isLoading && !!error && recipes.length === 0;
   const showSuggestionsStaleNotice = viewMode === "suggested" && !!error && recipes.length > 0;
+  const errorDetail = error && error !== copy.fetchError ? error : null;
 
   function createRecentSearchKey(searchIngredients: string[]) {
     return [...searchIngredients]
@@ -402,7 +403,12 @@ export default function App() {
             <div className="empty-state section-state section-state-error">
               <img src="/assets/mealio-icon.png" alt="" aria-hidden="true" />
               <h3>{copy.resultsErrorTitle}</h3>
-              <p>{error ?? copy.resultsErrorCopy}</p>
+              <p>{copy.resultsErrorCopy}</p>
+              {errorDetail ? (
+                <p className="section-state-detail">
+                  <strong>{copy.resultsErrorDetailLabel}:</strong> {errorDetail}
+                </p>
+              ) : null}
               <button className="azure-button section-state-action" type="button" onClick={() => void suggestRecipes()}>
                 {copy.resultsRetry}
               </button>
@@ -420,27 +426,36 @@ export default function App() {
               </p>
             </div>
           ) : (
-            <div className="recipe-grid">
-              {visibleRecipes.map((recipe) => (
-                (() => {
-                  const imageState = recipeImages[getRecipeImageKey(recipe)] ?? { status: "idle" as const };
+            <>
+              {viewMode === "suggested" ? (
+                <div className="recipe-trust-note">
+                  <p className="eyebrow">{copy.recipeTrustTitle}</p>
+                  <p>{copy.recipeTrustCopy}</p>
+                  <p className="recipe-trust-detail">{copy.pantryStaplesNote}</p>
+                </div>
+              ) : null}
+              <div className="recipe-grid">
+                {visibleRecipes.map((recipe) => (
+                  (() => {
+                    const imageState = recipeImages[getRecipeImageKey(recipe)] ?? { status: "idle" as const };
 
-                  return (
-                <RecipeCard
-                  key={getRecipeImageKey(recipe)}
-                  recipe={recipe}
-                  onOpen={openRecipe}
-                  imageUrl={imageState?.imageUrl ?? recipe.imageUrl}
-                  imageStatus={imageState.status}
-                  extraIngredients={getExtraIngredients(recipe)}
-                  language={language}
-                  extraIngredientsAria={copy.extraIngredientsAria}
-                  copy={copy}
-                />
-                  );
-                })()
-              ))}
-            </div>
+                    return (
+                  <RecipeCard
+                    key={getRecipeImageKey(recipe)}
+                    recipe={recipe}
+                    onOpen={openRecipe}
+                    imageUrl={imageState?.imageUrl ?? recipe.imageUrl}
+                    imageStatus={imageState.status}
+                    extraIngredients={getExtraIngredients(recipe)}
+                    language={language}
+                    extraIngredientsAria={copy.extraIngredientsAria}
+                    copy={copy}
+                  />
+                    );
+                  })()
+                ))}
+              </div>
+            </>
           )}
         </section>
       </main>
