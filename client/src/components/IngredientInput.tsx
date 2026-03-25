@@ -18,9 +18,11 @@ interface IngredientInputProps {
     ingredientsEyebrow: string;
     ingredientsTitle: string;
     ingredientsCopy: string;
+    ingredientInputLabel: string;
     addButton: string;
     ingredientPlaceholder: string;
     noIngredients: string;
+    removeIngredientLabel: string;
     recipeFormatLabel: string;
     formatEuropean: string;
     formatAmerican: string;
@@ -33,6 +35,8 @@ interface IngredientInputProps {
     recentSearchFormatEuropeanShort: string;
     recentSearchFormatAmericanShort: string;
     recentSearchRestoreLabel: string;
+    recentSearchFormatLabel: string;
+    recentSearchLanguageLabel: string;
   };
 }
 
@@ -80,7 +84,7 @@ export function IngredientInput({
 
       <form className="ingredient-form" onSubmit={submitIngredient}>
         <label className="sr-only" htmlFor="ingredient-input">
-          Add ingredient
+          {copy.ingredientInputLabel}
         </label>
         <input
           id="ingredient-input"
@@ -105,7 +109,7 @@ export function IngredientInput({
               className="ingredient-tag"
               type="button"
               onClick={() => onRemoveIngredient(ingredient)}
-              aria-label={`Remove ${ingredient}`}
+              aria-label={copy.removeIngredientLabel.replace("{ingredient}", ingredient)}
             >
               <span>{ingredient}</span>
               <span aria-hidden="true">×</span>
@@ -121,6 +125,7 @@ export function IngredientInput({
             type="button"
             className={measurementSystem === "european" ? "active" : ""}
             onClick={() => onMeasurementSystemChange("european")}
+            aria-pressed={measurementSystem === "european"}
           >
             {copy.formatEuropean}
           </button>
@@ -128,6 +133,7 @@ export function IngredientInput({
             type="button"
             className={measurementSystem === "american" ? "active" : ""}
             onClick={() => onMeasurementSystemChange("american")}
+            aria-pressed={measurementSystem === "american"}
           >
             {copy.formatAmerican}
           </button>
@@ -169,7 +175,11 @@ export function IngredientInput({
                 type="button"
                 className="recent-search-chip"
                 onClick={() => onRunRecentSearch(search)}
-                aria-label={`${copy.recentSearchRestoreLabel}: ${search.ingredients.join(", ")}`}
+                aria-label={`${copy.recentSearchRestoreLabel}: ${search.ingredients.join(", ")}. ${copy.recentSearchLanguageLabel}: ${languageOptions.find((option) => option.code === search.language)?.label}. ${copy.recentSearchFormatLabel}: ${
+                  search.measurementSystem === "european"
+                    ? copy.recentSearchFormatEuropeanShort
+                    : copy.recentSearchFormatAmericanShort
+                }.`}
               >
                 <span className="recent-search-chip-title">{search.ingredients.join(", ")}</span>
                 <span className="recent-search-chip-meta">

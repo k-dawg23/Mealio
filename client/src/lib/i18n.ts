@@ -19,9 +19,11 @@ interface TranslationSet {
   ingredientsEyebrow: string;
   ingredientsTitle: string;
   ingredientsCopy: string;
+  ingredientInputLabel: string;
   addButton: string;
   ingredientPlaceholder: string;
   noIngredients: string;
+  removeIngredientLabel: string;
   recipeFormatLabel: string;
   formatEuropean: string;
   formatAmerican: string;
@@ -52,16 +54,22 @@ interface TranslationSet {
   recentSearchFormatEuropeanShort: string;
   recentSearchFormatAmericanShort: string;
   recentSearchRestoreLabel: string;
+  recentSearchFormatLabel: string;
+  recentSearchLanguageLabel: string;
+  recentSearchesClearedAnnouncement: string;
+  recentSearchRestoredAnnouncement: string;
   resultsLoadingTitle: string;
   resultsLoadingCopy: string;
   resultsErrorTitle: string;
   resultsErrorCopy: string;
   resultsRetry: string;
   resultsStaleError: string;
+  recipesLoadedAnnouncement: string;
   imageLoadingLabel: string;
   imageUnavailableTitle: string;
   imageUnavailableCopy: string;
   imageRetry: string;
+  modalDialogLabel: string;
   fetchError: string;
 }
 
@@ -92,9 +100,11 @@ const translations: Record<LanguageCode, TranslationSet> = {
     ingredientsEyebrow: "Your ingredients",
     ingredientsTitle: "Build your basket one ingredient at a time.",
     ingredientsCopy: "Add what you already have in the kitchen. Mealio will suggest four realistic recipe ideas that make use of those ingredients.",
+    ingredientInputLabel: "Add ingredient",
     addButton: "Add",
     ingredientPlaceholder: "Try chicken, spinach, rice...",
     noIngredients: "No ingredients added yet.",
+    removeIngredientLabel: "Remove {ingredient}",
     recipeFormatLabel: "Recipe format",
     formatEuropean: "European",
     formatAmerican: "American",
@@ -125,16 +135,22 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchFormatEuropeanShort: "EU",
     recentSearchFormatAmericanShort: "US",
     recentSearchRestoreLabel: "Restore search",
+    recentSearchFormatLabel: "Format",
+    recentSearchLanguageLabel: "Language",
+    recentSearchesClearedAnnouncement: "Recent searches cleared.",
+    recentSearchRestoredAnnouncement: "Restored recent search for {ingredients}.",
     resultsLoadingTitle: "Finding recipe ideas",
     resultsLoadingCopy: "Mealio is building four recipes from your ingredients.",
     resultsErrorTitle: "Recipes could not be refreshed",
     resultsErrorCopy: "Try the same ingredients again or adjust your basket and rerun the search.",
     resultsRetry: "Try again",
     resultsStaleError: "Mealio could not refresh recipes right now. Showing your last results.",
+    recipesLoadedAnnouncement: "{count} recipes loaded.",
     imageLoadingLabel: "Generating recipe image",
     imageUnavailableTitle: "Image unavailable",
     imageUnavailableCopy: "The recipe is ready even if the photo is not.",
     imageRetry: "Retry image",
+    modalDialogLabel: "Recipe details dialog",
     fetchError: "Something went wrong while suggesting recipes."
   },
   "fr-FR": {
@@ -154,9 +170,11 @@ const translations: Record<LanguageCode, TranslationSet> = {
     ingredientsEyebrow: "Vos ingrédients",
     ingredientsTitle: "Composez votre panier un ingrédient à la fois.",
     ingredientsCopy: "Ajoutez ce que vous avez déjà dans votre cuisine. Mealio proposera quatre idées de recettes réalistes qui utilisent ces ingrédients.",
+    ingredientInputLabel: "Ajouter un ingrédient",
     addButton: "Ajouter",
     ingredientPlaceholder: "Par exemple poulet, épinards, riz...",
     noIngredients: "Aucun ingrédient ajouté pour le moment.",
+    removeIngredientLabel: "Retirer {ingredient}",
     recipeFormatLabel: "Format des recettes",
     formatEuropean: "Européen",
     formatAmerican: "Américain",
@@ -187,16 +205,22 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchFormatEuropeanShort: "UE",
     recentSearchFormatAmericanShort: "US",
     recentSearchRestoreLabel: "Relancer la recherche",
+    recentSearchFormatLabel: "Format",
+    recentSearchLanguageLabel: "Langue",
+    recentSearchesClearedAnnouncement: "Les recherches récentes ont été effacées.",
+    recentSearchRestoredAnnouncement: "Recherche récente relancée pour {ingredients}.",
     resultsLoadingTitle: "Recherche d’idées de recettes",
     resultsLoadingCopy: "Mealio prépare quatre recettes à partir de vos ingrédients.",
     resultsErrorTitle: "Les recettes n’ont pas pu être actualisées",
     resultsErrorCopy: "Réessayez avec les mêmes ingrédients ou modifiez votre panier puis relancez la recherche.",
     resultsRetry: "Réessayer",
     resultsStaleError: "Mealio n’a pas pu actualiser les recettes pour le moment. Les derniers résultats restent affichés.",
+    recipesLoadedAnnouncement: "{count} recettes chargées.",
     imageLoadingLabel: "Création de l’image de la recette",
     imageUnavailableTitle: "Image indisponible",
     imageUnavailableCopy: "La recette est prête même si la photo ne l’est pas.",
     imageRetry: "Réessayer l’image",
+    modalDialogLabel: "Fenêtre des détails de la recette",
     fetchError: "Un problème est survenu lors de la suggestion des recettes."
   },
   "de-DE": {
@@ -216,9 +240,11 @@ const translations: Record<LanguageCode, TranslationSet> = {
     ingredientsEyebrow: "Deine Zutaten",
     ingredientsTitle: "Baue deinen Vorrat eine Zutat nach der anderen auf.",
     ingredientsCopy: "Füge hinzu, was du bereits in der Küche hast. Mealio schlägt vier realistische Rezeptideen vor, die diese Zutaten nutzen.",
+    ingredientInputLabel: "Zutat hinzufügen",
     addButton: "Hinzufügen",
     ingredientPlaceholder: "Zum Beispiel Hähnchen, Spinat, Reis...",
     noIngredients: "Noch keine Zutaten hinzugefügt.",
+    removeIngredientLabel: "{ingredient} entfernen",
     recipeFormatLabel: "Rezeptformat",
     formatEuropean: "Europäisch",
     formatAmerican: "Amerikanisch",
@@ -249,16 +275,22 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchFormatEuropeanShort: "EU",
     recentSearchFormatAmericanShort: "US",
     recentSearchRestoreLabel: "Suche wiederherstellen",
+    recentSearchFormatLabel: "Format",
+    recentSearchLanguageLabel: "Sprache",
+    recentSearchesClearedAnnouncement: "Letzte Suchen wurden gelöscht.",
+    recentSearchRestoredAnnouncement: "Letzte Suche für {ingredients} wiederhergestellt.",
     resultsLoadingTitle: "Rezeptideen werden gesucht",
     resultsLoadingCopy: "Mealio erstellt vier Rezepte aus deinen Zutaten.",
     resultsErrorTitle: "Rezepte konnten nicht aktualisiert werden",
     resultsErrorCopy: "Versuche dieselben Zutaten erneut oder passe deinen Vorrat an und starte die Suche noch einmal.",
     resultsRetry: "Erneut versuchen",
     resultsStaleError: "Mealio konnte die Rezepte gerade nicht aktualisieren. Die letzten Ergebnisse werden weiter angezeigt.",
+    recipesLoadedAnnouncement: "{count} Rezepte geladen.",
     imageLoadingLabel: "Rezeptbild wird erstellt",
     imageUnavailableTitle: "Bild nicht verfügbar",
     imageUnavailableCopy: "Das Rezept ist bereit, auch wenn das Foto fehlt.",
     imageRetry: "Bild erneut laden",
+    modalDialogLabel: "Dialog für Rezeptdetails",
     fetchError: "Beim Vorschlagen der Rezepte ist ein Fehler aufgetreten."
   },
   "it-IT": {
@@ -278,9 +310,11 @@ const translations: Record<LanguageCode, TranslationSet> = {
     ingredientsEyebrow: "I tuoi ingredienti",
     ingredientsTitle: "Crea il tuo assortimento un ingrediente alla volta.",
     ingredientsCopy: "Aggiungi ciò che hai già in cucina. Mealio suggerirà quattro idee di ricette realistiche che usano questi ingredienti.",
+    ingredientInputLabel: "Aggiungi ingrediente",
     addButton: "Aggiungi",
     ingredientPlaceholder: "Prova pollo, spinaci, riso...",
     noIngredients: "Nessun ingrediente aggiunto ancora.",
+    removeIngredientLabel: "Rimuovi {ingredient}",
     recipeFormatLabel: "Formato ricette",
     formatEuropean: "Europeo",
     formatAmerican: "Americano",
@@ -311,16 +345,22 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchFormatEuropeanShort: "EU",
     recentSearchFormatAmericanShort: "US",
     recentSearchRestoreLabel: "Ripristina ricerca",
+    recentSearchFormatLabel: "Formato",
+    recentSearchLanguageLabel: "Lingua",
+    recentSearchesClearedAnnouncement: "Ricerche recenti cancellate.",
+    recentSearchRestoredAnnouncement: "Ricerca recente ripristinata per {ingredients}.",
     resultsLoadingTitle: "Ricerca di idee ricette",
     resultsLoadingCopy: "Mealio sta preparando quattro ricette dai tuoi ingredienti.",
     resultsErrorTitle: "Non è stato possibile aggiornare le ricette",
     resultsErrorCopy: "Riprova con gli stessi ingredienti oppure modifica ciò che hai e rilancia la ricerca.",
     resultsRetry: "Riprova",
     resultsStaleError: "Mealio non è riuscito ad aggiornare le ricette in questo momento. Gli ultimi risultati restano visibili.",
+    recipesLoadedAnnouncement: "{count} ricette caricate.",
     imageLoadingLabel: "Generazione immagine ricetta",
     imageUnavailableTitle: "Immagine non disponibile",
     imageUnavailableCopy: "La ricetta è pronta anche se la foto non lo è.",
     imageRetry: "Riprova immagine",
+    modalDialogLabel: "Finestra dettagli ricetta",
     fetchError: "Si è verificato un problema nel suggerire le ricette."
   },
   "pt-PT": {
@@ -340,9 +380,11 @@ const translations: Record<LanguageCode, TranslationSet> = {
     ingredientsEyebrow: "Os seus ingredientes",
     ingredientsTitle: "Construa o seu conjunto um ingrediente de cada vez.",
     ingredientsCopy: "Adicione o que já tem na cozinha. O Mealio vai sugerir quatro ideias de receitas realistas que usem esses ingredientes.",
+    ingredientInputLabel: "Adicionar ingrediente",
     addButton: "Adicionar",
     ingredientPlaceholder: "Experimente frango, espinafres, arroz...",
     noIngredients: "Ainda não adicionou ingredientes.",
+    removeIngredientLabel: "Remover {ingredient}",
     recipeFormatLabel: "Formato da receita",
     formatEuropean: "Europeu",
     formatAmerican: "Americano",
@@ -373,16 +415,22 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchFormatEuropeanShort: "UE",
     recentSearchFormatAmericanShort: "US",
     recentSearchRestoreLabel: "Repor pesquisa",
+    recentSearchFormatLabel: "Formato",
+    recentSearchLanguageLabel: "Idioma",
+    recentSearchesClearedAnnouncement: "Pesquisas recentes limpas.",
+    recentSearchRestoredAnnouncement: "Pesquisa recente reposta para {ingredients}.",
     resultsLoadingTitle: "A procurar ideias de receitas",
     resultsLoadingCopy: "O Mealio está a preparar quatro receitas com os seus ingredientes.",
     resultsErrorTitle: "Não foi possível atualizar as receitas",
     resultsErrorCopy: "Tente novamente com os mesmos ingredientes ou ajuste o conjunto e volte a pesquisar.",
     resultsRetry: "Tentar novamente",
     resultsStaleError: "O Mealio não conseguiu atualizar as receitas neste momento. Os últimos resultados continuam visíveis.",
+    recipesLoadedAnnouncement: "{count} receitas carregadas.",
     imageLoadingLabel: "A gerar imagem da receita",
     imageUnavailableTitle: "Imagem indisponível",
     imageUnavailableCopy: "A receita está pronta mesmo que a fotografia não esteja.",
     imageRetry: "Tentar imagem novamente",
+    modalDialogLabel: "Janela de detalhes da receita",
     fetchError: "Ocorreu um problema ao sugerir receitas."
   },
   "es-ES": {
@@ -402,9 +450,11 @@ const translations: Record<LanguageCode, TranslationSet> = {
     ingredientsEyebrow: "Tus ingredientes",
     ingredientsTitle: "Construye tu cesta un ingrediente cada vez.",
     ingredientsCopy: "Añade lo que ya tienes en la cocina. Mealio sugerirá cuatro ideas de recetas realistas que aprovechen esos ingredientes.",
+    ingredientInputLabel: "Añadir ingrediente",
     addButton: "Añadir",
     ingredientPlaceholder: "Prueba pollo, espinacas, arroz...",
     noIngredients: "Aún no has añadido ingredientes.",
+    removeIngredientLabel: "Quitar {ingredient}",
     recipeFormatLabel: "Formato de receta",
     formatEuropean: "Europeo",
     formatAmerican: "Americano",
@@ -435,16 +485,22 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchFormatEuropeanShort: "UE",
     recentSearchFormatAmericanShort: "US",
     recentSearchRestoreLabel: "Recuperar búsqueda",
+    recentSearchFormatLabel: "Formato",
+    recentSearchLanguageLabel: "Idioma",
+    recentSearchesClearedAnnouncement: "Búsquedas recientes borradas.",
+    recentSearchRestoredAnnouncement: "Búsqueda reciente recuperada para {ingredients}.",
     resultsLoadingTitle: "Buscando ideas de recetas",
     resultsLoadingCopy: "Mealio está preparando cuatro recetas con tus ingredientes.",
     resultsErrorTitle: "No se pudieron actualizar las recetas",
     resultsErrorCopy: "Vuelve a intentarlo con los mismos ingredientes o ajusta tu selección y repite la búsqueda.",
     resultsRetry: "Intentar de nuevo",
     resultsStaleError: "Mealio no pudo actualizar las recetas ahora mismo. Se muestran tus últimos resultados.",
+    recipesLoadedAnnouncement: "{count} recetas cargadas.",
     imageLoadingLabel: "Generando imagen de la receta",
     imageUnavailableTitle: "Imagen no disponible",
     imageUnavailableCopy: "La receta está lista aunque la foto no lo esté.",
     imageRetry: "Reintentar imagen",
+    modalDialogLabel: "Ventana de detalles de la receta",
     fetchError: "Se produjo un problema al sugerir las recetas."
   }
 };

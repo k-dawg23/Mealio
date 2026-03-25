@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { Recipe } from "../lib/types";
 import { RecipeImage } from "./RecipeImage";
 
@@ -18,6 +19,7 @@ interface RecipeModalProps {
     modalEyebrow: string;
     modalIngredients: string;
     modalInstructions: string;
+    modalDialogLabel: string;
     imageLoadingLabel: string;
     imageUnavailableTitle: string;
     imageUnavailableCopy: string;
@@ -35,6 +37,60 @@ export function RecipeModal({
   onRetryImage,
   copy
 }: RecipeModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!recipe) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const focusableElements = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (!focusableElements || focusableElements.length === 0) {
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+        return;
+      }
+
+      if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose, recipe]);
+
   if (!recipe) {
     return null;
   }
@@ -43,13 +99,22 @@ export function RecipeModal({
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
       <div
         className="modal-card"
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="recipe-modal-title"
+        aria-describedby="recipe-modal-description"
+        aria-label={copy.modalDialogLabel}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="modal-scroll-area">
-          <button className="modal-close" type="button" onClick={onClose} aria-label={copy.modalClose}>
+          <button
+            className="modal-close"
+            type="button"
+            onClick={onClose}
+            aria-label={copy.modalClose}
+            ref={closeButtonRef}
+          >
             ×
           </button>
           <button
@@ -63,7 +128,9 @@ export function RecipeModal({
           </button>
           <p className="eyebrow">{copy.modalEyebrow}</p>
           <h2 id="recipe-modal-title">{recipe.title}</h2>
-          <p className="modal-description">{recipe.description}</p>
+          <p className="modal-description" id="recipe-modal-description">
+            {recipe.description}
+          </p>
           <RecipeImage
             title={recipe.title}
             imageUrl={imageUrl}

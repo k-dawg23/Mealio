@@ -120,6 +120,13 @@
 - Reworked recipe results states so loading and failure feedback is shown in the suggestions section instead of relying on one generic error banner
 - Added clearer image fallback handling with an explicit unavailable state and retry support in the recipe details modal
 
+### Phase 2 enhancements
+
+- Added keyboard-friendly modal behavior with focus trapping, `Escape` support, and focus returning to the previously selected recipe card
+- Added polite live-region announcements for recipe loading, recipe results, recent-search reruns, and search-history clearing
+- Improved accessible labels for ingredient removal, recent-search metadata, language selection, and segmented recipe/bookmark controls
+- Tightened the mobile ingredients panel hierarchy with more compact spacing and a touch-friendly horizontal recent-search layout
+
 ### Recipe images
 
 - Added background recipe image generation using OpenAI `gpt-image-1-mini`
