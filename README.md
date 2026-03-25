@@ -9,6 +9,7 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - Add ingredients one at a time as removable tags
 - Request exactly 4 AI-generated recipes from the server
 - Display recipe cards with title, description, cook time, and difficulty
+- Show extra ingredients to buy as small azure badges on recipe cards, based on the ingredients entered for that recipe search
 - Open a modal for ingredients and step-by-step instructions
 - Bookmark recipes in `localStorage`
 - Default recipe measurements to European format with a user switch for European or American recipe output
@@ -99,6 +100,14 @@ Mealio also sends the selected recipe measurement preference with each request:
 - `American`: American-style recipe measurements when the user switches formats
 
 The selected format is included in the server cache key so cached European and American responses stay separate.
+
+## Ingredient Comparison
+
+When recipes are returned from the AI, Mealio compares each recipe ingredient list against the ingredients entered for that search.
+
+- Ingredients the user already entered are treated as available, even when the recipe uses a more specific phrasing like `chicken breast` vs `chicken`
+- Common pantry staples such as salt, pepper, oil, butter, garlic, onion, sugar, and flour are ignored
+- Any remaining extras are shown on the recipe card as small azure badges so it is easy to see what still needs buying
 
 ## Recipe Images
 

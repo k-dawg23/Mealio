@@ -11,6 +11,7 @@ export interface Recipe {
   ingredients: string[];
   instructions: string[];
   imageUrl?: string;
+  requestedIngredients?: string[];
 }
 
 export interface RecipeImageState {
