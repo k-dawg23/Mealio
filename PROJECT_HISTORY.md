@@ -134,6 +134,13 @@
 - Unified recipe identity rules across client bookmark logic, selected-recipe state, and server-side generated-image caching
 - Hardened server-side recipe validation and normalization with tighter field limits, trimmed list items, and duplicate-recipe rejection
 
+### Phase 4 enhancements
+
+- Reduced repeated recipe and image state mapping in the client by moving shared collection updates into focused helper modules
+- Split translations into locale-specific files so app copy is easier to review and maintain per language
+- Added lightweight unit tests for ingredient comparison, recipe identity, bookmark-storage migration, recent-search migration, and language defaults
+- Added structured JSON logging hooks on the server for recipe generation, cache hits, image preparation, failures, and startup events
+
 ### Recipe images
 
 - Added background recipe image generation using OpenAI `gpt-image-1-mini`

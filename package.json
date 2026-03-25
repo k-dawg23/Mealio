@@ -14,7 +14,8 @@
     "build:client": "vite build --config client/vite.config.ts",
     "build:server": "tsc --project server/tsconfig.json",
     "start": "node dist/server/index.js",
-    "check": "tsc --project client/tsconfig.json --noEmit && tsc --project server/tsconfig.json --noEmit"
+    "check": "tsc --project client/tsconfig.json --noEmit && tsc --project server/tsconfig.json --noEmit",
+    "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
     "dotenv": "^16.5.0",

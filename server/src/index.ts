@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { getCachedRecipes, setCachedRecipes } from "./cache.js";
 import { generatedImagesDir } from "./imageCache.js";
 import { ensureRecipeImage } from "./imageGeneration.js";
+import { logEvent } from "./logger.js";
 import {
   generateRecipesFromIngredients,
   type LanguageCode,
@@ -67,16 +68,20 @@ app.post("/api/recipes/suggest", async (request, response) => {
     const cached = await getCachedRecipes(cacheKey);
 
     if (cached) {
+      logEvent("info", "recipes.cache_hit", { cacheKey, count: cached.recipes.length });
       response.json(cached);
       return;
     }
 
+    logEvent("info", "recipes.generate_requested", { cacheKey, ingredientCount: ingredients.length, language, measurementSystem });
     const payload = await generateRecipesFromIngredients(ingredients, measurementSystem, language);
     await setCachedRecipes(cacheKey, payload);
+    logEvent("info", "recipes.generated", { cacheKey, count: payload.recipes.length });
     response.json(payload);
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to generate recipes right now.";
+    logEvent("error", "recipes.generate_failed", { cacheKey, error });
     response.status(500).json({ error: message });
   }
 });
@@ -84,10 +89,12 @@ app.post("/api/recipes/suggest", async (request, response) => {
 app.post("/api/recipe-images", async (request, response) => {
   try {
     const payload = await ensureRecipeImage(request.body?.recipe);
+    logEvent("info", "images.ensure_result", { status: payload.status, hasImageUrl: Boolean(payload.imageUrl) });
     response.json(payload);
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to generate recipe image right now.";
+    logEvent("error", "images.ensure_failed", { error });
     response.status(500).json({ error: message });
   }
 });
@@ -99,5 +106,5 @@ app.get("*", (_request, response) => {
 });
 
 app.listen(port, () => {
-  console.log(`Mealio server listening on http://localhost:${port}`);
+  logEvent("info", "server.started", { port, url: `http://localhost:${port}` });
 });

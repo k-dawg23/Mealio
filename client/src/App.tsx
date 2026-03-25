@@ -4,6 +4,7 @@ import { RecipeCard } from "./components/RecipeCard";
 import { RecipeModal } from "./components/RecipeModal";
 import { getExtraIngredients } from "./lib/ingredientComparison";
 import { getTranslations, languageOptions } from "./lib/i18n";
+import { collectUniqueRecipes, replaceRecipeImage, toggleRecipeBookmark } from "./lib/recipeCollections";
 import { getRecipeImageKey } from "./lib/recipeImageKey";
 import { normalizeRecipeIdentity } from "./lib/recipeIdentity";
 import {
@@ -71,15 +72,7 @@ export default function App() {
   }, [copy.resultsLoadingTitle, isLoading]);
 
   useEffect(() => {
-    const uniqueRecipes = new Map<string, Recipe>();
-
-    for (const recipe of [...recipes, ...bookmarks]) {
-      uniqueRecipes.set(getRecipeImageKey(recipe), recipe);
-    }
-
-    if (selectedRecipe) {
-      uniqueRecipes.set(getRecipeImageKey(selectedRecipe), selectedRecipe);
-    }
+    const uniqueRecipes = collectUniqueRecipes(recipes, bookmarks, selectedRecipe);
 
     for (const [key, recipe] of uniqueRecipes) {
       const currentState = recipeImages[key];
@@ -224,13 +217,7 @@ export default function App() {
   }
 
   function toggleBookmark(recipe: Recipe) {
-    setBookmarks((current) => {
-      const recipeKey = getRecipeImageKey(recipe);
-      const exists = current.some((item) => getRecipeImageKey(item) === recipeKey);
-      return exists
-        ? current.filter((item) => getRecipeImageKey(item) !== recipeKey)
-        : [recipe, ...current];
-    });
+    setBookmarks((current) => toggleRecipeBookmark(current, recipe));
   }
 
   function retryRecipeImage(recipe: Recipe) {
@@ -274,19 +261,17 @@ export default function App() {
       };
 
       if (payload.status === "ready" && payload.imageUrl) {
+        const imageUrl = payload.imageUrl;
+
         setRecipeImages((current) => ({
           ...current,
-          [key]: { status: "ready", imageUrl: payload.imageUrl }
+          [key]: { status: "ready", imageUrl }
         }));
-        setRecipes((current) =>
-          current.map((item) => (getRecipeImageKey(item) === key ? { ...item, imageUrl: payload.imageUrl } : item))
-        );
-        setBookmarks((current) =>
-          current.map((item) => (getRecipeImageKey(item) === key ? { ...item, imageUrl: payload.imageUrl } : item))
-        );
+        setRecipes((current) => replaceRecipeImage(current, key, imageUrl));
+        setBookmarks((current) => replaceRecipeImage(current, key, imageUrl));
         setSelectedRecipe((current) =>
           current && getRecipeImageKey(current) === key
-            ? { ...current, imageUrl: payload.imageUrl }
+            ? { ...current, imageUrl }
             : current
         );
         return;
