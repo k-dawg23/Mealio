@@ -5,9 +5,10 @@ interface RecipeModalProps {
   recipe: Recipe | null;
   isBookmarked: boolean;
   imageUrl?: string;
-  isImageLoading: boolean;
+  imageStatus: "idle" | "loading" | "ready" | "error";
   onClose: () => void;
   onToggleBookmark: (recipe: Recipe) => void;
+  onRetryImage: (recipe: Recipe) => void;
   copy: {
     modalClose: string;
     modalSave: string;
@@ -17,6 +18,10 @@ interface RecipeModalProps {
     modalEyebrow: string;
     modalIngredients: string;
     modalInstructions: string;
+    imageLoadingLabel: string;
+    imageUnavailableTitle: string;
+    imageUnavailableCopy: string;
+    imageRetry: string;
   };
 }
 
@@ -24,9 +29,10 @@ export function RecipeModal({
   recipe,
   isBookmarked,
   imageUrl,
-  isImageLoading,
+  imageStatus,
   onClose,
   onToggleBookmark,
+  onRetryImage,
   copy
 }: RecipeModalProps) {
   if (!recipe) {
@@ -58,7 +64,13 @@ export function RecipeModal({
           <p className="eyebrow">{copy.modalEyebrow}</p>
           <h2 id="recipe-modal-title">{recipe.title}</h2>
           <p className="modal-description">{recipe.description}</p>
-          <RecipeImage title={recipe.title} imageUrl={imageUrl} isLoading={isImageLoading} />
+          <RecipeImage
+            title={recipe.title}
+            imageUrl={imageUrl}
+            status={imageStatus}
+            copy={copy}
+            onRetry={imageStatus === "error" ? () => onRetryImage(recipe) : undefined}
+          />
 
           <div className="modal-grid">
             <section>

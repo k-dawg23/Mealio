@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { IngredientInput } from "./components/IngredientInput";
 import { RecipeCard } from "./components/RecipeCard";
 import { RecipeModal } from "./components/RecipeModal";
@@ -15,7 +15,13 @@ import {
   saveMeasurementSystem,
   saveRecentSearches
 } from "./lib/storage";
-import type { LanguageCode, MeasurementSystem, Recipe, RecipeImageState } from "./lib/types";
+import type {
+  LanguageCode,
+  MeasurementSystem,
+  Recipe,
+  RecipeImageState,
+  RecentSearchEntry
+} from "./lib/types";
 
 type ViewMode = "suggested" | "saved";
 
@@ -32,7 +38,8 @@ export default function App() {
     loadMeasurementSystem()
   );
   const [recipeImages, setRecipeImages] = useState<Record<string, RecipeImageState>>({});
-  const [recentSearches, setRecentSearches] = useState<string[][]>(() => loadRecentSearches());
+  const [recentSearches, setRecentSearches] = useState<RecentSearchEntry[]>(() => loadRecentSearches());
+  const suggestAbortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     saveBookmarks(bookmarks);
@@ -50,6 +57,8 @@ export default function App() {
   useEffect(() => {
     saveRecentSearches(recentSearches);
   }, [recentSearches]);
+
+  useEffect(() => () => suggestAbortRef.current?.abort(), []);
 
   useEffect(() => {
     const uniqueRecipes = new Map<string, Recipe>();
@@ -95,11 +104,30 @@ export default function App() {
     [bookmarks]
   );
   const copy = getTranslations(language);
+  const visibleRecipes = viewMode === "saved" ? bookmarks : recipes;
+  const showSuggestionsLoadingState = viewMode === "suggested" && isLoading && recipes.length === 0;
+  const showSuggestionsErrorState = viewMode === "suggested" && !isLoading && !!error && recipes.length === 0;
+  const showSuggestionsStaleNotice = viewMode === "suggested" && !!error && recipes.length > 0;
 
-  async function suggestRecipes(searchIngredients = ingredients) {
-    if (searchIngredients.length === 0) {
+  function createRecentSearchKey(searchIngredients: string[]) {
+    return [...searchIngredients]
+      .map((ingredient) => ingredient.trim().toLowerCase())
+      .sort()
+      .join("|");
+  }
+
+  async function suggestRecipes(search: RecentSearchEntry = {
+    ingredients,
+    measurementSystem,
+    language
+  }) {
+    if (search.ingredients.length === 0) {
       return;
     }
+
+    suggestAbortRef.current?.abort();
+    const controller = new AbortController();
+    suggestAbortRef.current = controller;
 
     setIsLoading(true);
     setError(null);
@@ -111,7 +139,8 @@ export default function App() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ingredients: searchIngredients, measurementSystem, language })
+        body: JSON.stringify(search),
+        signal: controller.signal
       });
 
       if (!response.ok) {
@@ -123,34 +152,32 @@ export default function App() {
       setRecipes(
         payload.recipes.map((recipe) => ({
           ...recipe,
-          requestedIngredients: [...searchIngredients]
+          requestedIngredients: [...search.ingredients]
         }))
       );
-      const normalizedSearch = [...searchIngredients];
-      const searchKey = normalizedSearch
-        .map((ingredient) => ingredient.trim().toLowerCase())
-        .sort()
-        .join("|");
+      const normalizedSearch = [...search.ingredients];
+      const searchKey = createRecentSearchKey(normalizedSearch);
 
       setRecentSearches((current) => {
-        const deduped = current.filter((entry) => {
-          const entryKey = [...entry]
-            .map((ingredient) => ingredient.trim().toLowerCase())
-            .sort()
-            .join("|");
-          return entryKey !== searchKey;
-        });
+        const deduped = current.filter((entry) => createRecentSearchKey(entry.ingredients) !== searchKey);
 
-        return [normalizedSearch, ...deduped].slice(0, 20);
+        return [{ ...search, ingredients: normalizedSearch }, ...deduped].slice(0, 20);
       });
     } catch (fetchError) {
+      if (fetchError instanceof DOMException && fetchError.name === "AbortError") {
+        return;
+      }
+
       const message =
         fetchError instanceof Error
           ? fetchError.message
           : copy.fetchError;
       setError(message);
     } finally {
-      setIsLoading(false);
+      if (suggestAbortRef.current === controller) {
+        suggestAbortRef.current = null;
+        setIsLoading(false);
+      }
     }
   }
 
@@ -170,9 +197,11 @@ export default function App() {
     setIngredients((current) => current.filter((item) => item !== ingredient));
   }
 
-  function runRecentSearch(searchIngredients: string[]) {
-    setIngredients(searchIngredients);
-    void suggestRecipes(searchIngredients);
+  function runRecentSearch(search: RecentSearchEntry) {
+    setIngredients(search.ingredients);
+    setMeasurementSystem(search.measurementSystem);
+    setLanguage(search.language);
+    void suggestRecipes(search);
   }
 
   function clearRecentSearches() {
@@ -187,6 +216,15 @@ export default function App() {
         ? current.filter((item) => getRecipeImageKey(item) !== recipeKey)
         : [recipe, ...current];
     });
+  }
+
+  function retryRecipeImage(recipe: Recipe) {
+    const key = getRecipeImageKey(recipe);
+    setRecipeImages((current) => ({
+      ...current,
+      [key]: { status: "loading" }
+    }));
+    void ensureRecipeImage(recipe, key);
   }
 
   async function ensureRecipeImage(recipe: Recipe, key: string, attempt = 0): Promise<void> {
@@ -242,8 +280,6 @@ export default function App() {
       [key]: { status: "error" }
     }));
   }
-
-  const visibleRecipes = viewMode === "saved" ? bookmarks : recipes;
 
   return (
     <div className="app-shell">
@@ -336,9 +372,24 @@ export default function App() {
             </div>
           </div>
 
-          {error ? <p className="error-banner">{error}</p> : null}
+          {showSuggestionsStaleNotice ? <p className="error-banner">{copy.resultsStaleError}</p> : null}
 
-          {visibleRecipes.length === 0 ? (
+          {showSuggestionsLoadingState ? (
+            <div className="empty-state section-state">
+              <img src="/assets/mealio-icon.png" alt="" aria-hidden="true" />
+              <h3>{copy.resultsLoadingTitle}</h3>
+              <p>{copy.resultsLoadingCopy}</p>
+            </div>
+          ) : showSuggestionsErrorState ? (
+            <div className="empty-state section-state section-state-error">
+              <img src="/assets/mealio-icon.png" alt="" aria-hidden="true" />
+              <h3>{copy.resultsErrorTitle}</h3>
+              <p>{error ?? copy.resultsErrorCopy}</p>
+              <button className="azure-button section-state-action" type="button" onClick={() => void suggestRecipes()}>
+                {copy.resultsRetry}
+              </button>
+            </div>
+          ) : visibleRecipes.length === 0 ? (
             <div className="empty-state">
               <img src="/assets/mealio-icon.png" alt="" aria-hidden="true" />
               <h3>
@@ -354,18 +405,19 @@ export default function App() {
             <div className="recipe-grid">
               {visibleRecipes.map((recipe) => (
                 (() => {
-                  const imageState = recipeImages[getRecipeImageKey(recipe)];
+                  const imageState = recipeImages[getRecipeImageKey(recipe)] ?? { status: "idle" as const };
 
                   return (
                 <RecipeCard
-                  key={recipe.id}
+                  key={getRecipeImageKey(recipe)}
                   recipe={recipe}
                   onOpen={setSelectedRecipe}
                   imageUrl={imageState?.imageUrl ?? recipe.imageUrl}
-                  isImageLoading={imageState?.status === "loading"}
+                  imageStatus={imageState.status}
                   extraIngredients={getExtraIngredients(recipe)}
                   language={language}
                   extraIngredientsAria={copy.extraIngredientsAria}
+                  copy={copy}
                 />
                   );
                 })()
@@ -385,13 +437,14 @@ export default function App() {
             ? recipeImages[getRecipeImageKey(selectedRecipe)]?.imageUrl ?? selectedRecipe.imageUrl
             : undefined
         }
-        isImageLoading={
+        imageStatus={
           selectedRecipe
-            ? recipeImages[getRecipeImageKey(selectedRecipe)]?.status === "loading"
-            : false
+            ? recipeImages[getRecipeImageKey(selectedRecipe)]?.status ?? "idle"
+            : "idle"
         }
         onClose={() => setSelectedRecipe(null)}
         onToggleBookmark={toggleBookmark}
+        onRetryImage={retryRecipeImage}
         copy={copy}
       />
     </div>

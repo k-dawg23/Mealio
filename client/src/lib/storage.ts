@@ -1,4 +1,4 @@
-import type { LanguageCode, MeasurementSystem, Recipe } from "./types";
+import type { LanguageCode, MeasurementSystem, Recipe, RecentSearchEntry } from "./types";
 
 const BOOKMARKS_KEY = "mealio.bookmarks";
 const MEASUREMENT_KEY = "mealio.measurement-system";
@@ -43,20 +43,72 @@ export function saveMeasurementSystem(system: MeasurementSystem) {
   window.localStorage.setItem(MEASUREMENT_KEY, system);
 }
 
-export function loadRecentSearches(): string[][] {
+export function loadRecentSearches(): RecentSearchEntry[] {
   if (typeof window === "undefined") {
     return [];
   }
 
   try {
     const raw = window.localStorage.getItem(RECENT_SEARCHES_KEY);
-    return raw ? (JSON.parse(raw) as string[][]) : [];
+    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.flatMap((entry) => {
+      if (Array.isArray(entry)) {
+        const ingredients = entry.filter((item): item is string => typeof item === "string");
+
+        return ingredients.length > 0
+          ? [{
+              ingredients,
+              measurementSystem: loadMeasurementSystem(),
+              language: loadLanguage()
+            }]
+          : [];
+      }
+
+      if (typeof entry !== "object" || !entry) {
+        return [];
+      }
+
+      const candidate = entry as {
+        ingredients?: unknown;
+        measurementSystem?: unknown;
+        language?: unknown;
+      };
+
+      const ingredients = Array.isArray(candidate.ingredients)
+        ? candidate.ingredients.filter((item): item is string => typeof item === "string")
+        : [];
+
+      if (ingredients.length === 0) {
+        return [];
+      }
+
+      const language: LanguageCode =
+        candidate.language === "fr-FR" ||
+        candidate.language === "de-DE" ||
+        candidate.language === "it-IT" ||
+        candidate.language === "pt-PT" ||
+        candidate.language === "es-ES"
+          ? candidate.language
+          : "en-GB";
+
+      return [{
+        ingredients,
+        measurementSystem:
+          candidate.measurementSystem === "american" ? ("american" as const) : ("european" as const),
+        language
+      }];
+    }).slice(0, 20);
   } catch {
     return [];
   }
 }
 
-export function saveRecentSearches(searches: string[][]) {
+export function saveRecentSearches(searches: RecentSearchEntry[]) {
   if (typeof window === "undefined") {
     return;
   }

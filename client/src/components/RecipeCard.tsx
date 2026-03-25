@@ -1,30 +1,43 @@
 import { translateDifficulty } from "../lib/i18n";
-import type { LanguageCode, Recipe } from "../lib/types";
+import type { LanguageCode, Recipe, RecipeImageStatus } from "../lib/types";
 import { RecipeImage } from "./RecipeImage";
 
 interface RecipeCardProps {
   recipe: Recipe;
   onOpen: (recipe: Recipe) => void;
   imageUrl?: string;
-  isImageLoading: boolean;
+  imageStatus: RecipeImageStatus;
   extraIngredients: string[];
   language: LanguageCode;
   extraIngredientsAria: string;
+  copy: {
+    imageLoadingLabel: string;
+    imageUnavailableTitle: string;
+    imageUnavailableCopy: string;
+    imageRetry: string;
+  };
 }
 
 export function RecipeCard({
   recipe,
   onOpen,
   imageUrl,
-  isImageLoading,
+  imageStatus,
   extraIngredients,
   language,
-  extraIngredientsAria
+  extraIngredientsAria,
+  copy
 }: RecipeCardProps) {
   return (
     <article className="recipe-card">
       <button className="recipe-card-hitbox" type="button" onClick={() => onOpen(recipe)}>
-        <RecipeImage title={recipe.title} imageUrl={imageUrl} isLoading={isImageLoading} />
+        <RecipeImage
+          title={recipe.title}
+          imageUrl={imageUrl}
+          status={imageStatus}
+          copy={copy}
+          fallbackBadge={imageStatus === "error" ? recipe.cookTime : null}
+        />
         <div className="recipe-meta">
           <span className="time-pill">{recipe.cookTime}</span>
           <span className={`difficulty-badge difficulty-${recipe.difficulty.toLowerCase()}`}>
