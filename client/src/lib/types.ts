@@ -10,6 +10,7 @@ export interface Recipe {
   difficulty: Difficulty;
   ingredients: string[];
   instructions: string[];
+  imageUrl?: string;
 }
 
 export interface RecipeImageState {

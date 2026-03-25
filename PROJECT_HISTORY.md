@@ -59,3 +59,4 @@
 - Reused generated images across suggested recipes, bookmarked recipes, and the recipe details modal
 - Added persistent image cache metadata plus generated image file storage on the server
 - Added Vite dev-server proxy support for `/generated-images` so cached images load correctly during local development
+- Updated bookmarked recipe persistence so generated image URLs are written back into saved recipes for reliable image restore after reopening the app

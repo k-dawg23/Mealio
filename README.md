@@ -108,3 +108,4 @@ Mealio generates a food photo for each recipe on the server using `gpt-image-1-m
 - A loading placeholder is shown while each image is being created.
 - Generated images are reused across recipe suggestions, bookmarks, and the recipe details modal.
 - Image requests are cached so the same recipe does not trigger another generation call.
+- When an image is ready, the bookmarked recipe entry is updated too, so saved recipes can reopen later with their image already available.
