@@ -20,7 +20,7 @@ export function getRecipeKey(recipe: Recipe) {
 }
 
 export function normalizeRecipeIdentity(recipe: Recipe): Recipe {
-  const recipeKey = getRecipeKey(recipe);
+  const recipeKey = createRecipeIdentity(recipe);
 
   return {
     ...recipe,
