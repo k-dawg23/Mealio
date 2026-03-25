@@ -1,9 +1,16 @@
+import { normalizeRecipeIdentity } from "./recipeIdentity";
 import type { LanguageCode, MeasurementSystem, Recipe, RecentSearchEntry } from "./types";
 
 const BOOKMARKS_KEY = "mealio.bookmarks";
 const MEASUREMENT_KEY = "mealio.measurement-system";
 const RECENT_SEARCHES_KEY = "mealio.recent-searches";
 const LANGUAGE_KEY = "mealio.language";
+const BOOKMARKS_VERSION = 2;
+
+interface BookmarkStore {
+  version: number;
+  recipes: Recipe[];
+}
 
 export function loadBookmarks(): Recipe[] {
   if (typeof window === "undefined") {
@@ -12,7 +19,31 @@ export function loadBookmarks(): Recipe[] {
 
   try {
     const raw = window.localStorage.getItem(BOOKMARKS_KEY);
-    return raw ? (JSON.parse(raw) as Recipe[]) : [];
+    const parsed = raw ? (JSON.parse(raw) as unknown) : null;
+
+    if (!parsed) {
+      return [];
+    }
+
+    if (Array.isArray(parsed)) {
+      return parsed
+        .filter((item): item is Recipe => typeof item === "object" && item !== null)
+        .map(normalizeRecipeIdentity);
+    }
+
+    if (typeof parsed !== "object" || !("recipes" in parsed)) {
+      return [];
+    }
+
+    const store = parsed as Partial<BookmarkStore>;
+
+    if (!Array.isArray(store.recipes)) {
+      return [];
+    }
+
+    return store.recipes
+      .filter((item): item is Recipe => typeof item === "object" && item !== null)
+      .map(normalizeRecipeIdentity);
   } catch {
     return [];
   }
@@ -23,7 +54,12 @@ export function saveBookmarks(recipes: Recipe[]) {
     return;
   }
 
-  window.localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(recipes));
+  const payload: BookmarkStore = {
+    version: BOOKMARKS_VERSION,
+    recipes: recipes.map(normalizeRecipeIdentity)
+  };
+
+  window.localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(payload));
 }
 
 export function loadMeasurementSystem(): MeasurementSystem {

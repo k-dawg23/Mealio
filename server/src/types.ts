@@ -1,13 +1,25 @@
 import { z } from "zod";
 
-export const recipeSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  description: z.string().min(1),
-  cookTime: z.string().min(1),
+function trimmedString(min: number, max: number) {
+  return z.string().trim().min(min).max(max);
+}
+
+export const rawRecipeSchema = z.object({
+  id: z.string().trim().min(1),
+  title: trimmedString(1, 120),
+  description: trimmedString(1, 240),
+  cookTime: trimmedString(1, 40),
   difficulty: z.enum(["Easy", "Medium", "Hard"]),
-  ingredients: z.array(z.string().min(1)).min(1),
-  instructions: z.array(z.string().min(1)).min(1)
+  ingredients: z.array(trimmedString(1, 140)).min(1).max(24),
+  instructions: z.array(trimmedString(1, 320)).min(1).max(16)
+});
+
+export const recipeSchema = rawRecipeSchema.extend({
+  recipeKey: trimmedString(1, 2000)
+});
+
+export const rawRecipesPayloadSchema = z.object({
+  recipes: z.array(rawRecipeSchema).length(4)
 });
 
 export const recipesPayloadSchema = z.object({
@@ -15,4 +27,5 @@ export const recipesPayloadSchema = z.object({
 });
 
 export type Recipe = z.infer<typeof recipeSchema>;
+export type RawRecipe = z.infer<typeof rawRecipeSchema>;
 export type RecipesPayload = z.infer<typeof recipesPayloadSchema>;

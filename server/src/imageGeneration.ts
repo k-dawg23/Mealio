@@ -12,6 +12,7 @@ import {
 
 const recipeSchema = z.object({
   id: z.string(),
+  recipeKey: z.string().optional(),
   title: z.string(),
   description: z.string(),
   cookTime: z.string(),

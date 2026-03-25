@@ -127,6 +127,13 @@
 - Improved accessible labels for ingredient removal, recent-search metadata, language selection, and segmented recipe/bookmark controls
 - Tightened the mobile ingredients panel hierarchy with more compact spacing and a touch-friendly horizontal recent-search layout
 
+### Phase 3 enhancements
+
+- Added stable app-generated recipe keys so bookmarks, saved-state checks, and image caching no longer depend on AI-provided ids
+- Switched bookmark persistence to a versioned storage format and added migration so older saved recipes are normalized automatically
+- Unified recipe identity rules across client bookmark logic, selected-recipe state, and server-side generated-image caching
+- Hardened server-side recipe validation and normalization with tighter field limits, trimmed list items, and duplicate-recipe rejection
+
 ### Recipe images
 
 - Added background recipe image generation using OpenAI `gpt-image-1-mini`
