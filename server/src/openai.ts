@@ -1,9 +1,57 @@
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
-import { recipesPayloadSchema, type RecipesPayload } from "./types.js";
+import { createRecipeIdentity } from "./recipeIdentity.js";
+import { rawRecipesPayloadSchema, recipesPayloadSchema, type RawRecipe, type RecipesPayload } from "./types.js";
 
 export type MeasurementSystem = "european" | "american";
 export type LanguageCode = "en-GB" | "fr-FR" | "de-DE" | "it-IT" | "pt-PT" | "es-ES";
+
+function normalizeList(values: string[], limit: number) {
+  return values
+    .map((value) => value.trim().replace(/\s+/g, " "))
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function normalizeRecipe(recipe: RawRecipe) {
+  const normalized: RawRecipe = {
+    ...recipe,
+    id: recipe.id.trim(),
+    title: recipe.title.trim(),
+    description: recipe.description.trim(),
+    cookTime: recipe.cookTime.trim(),
+    ingredients: normalizeList(recipe.ingredients, 24),
+    instructions: normalizeList(recipe.instructions, 16)
+  };
+
+  const recipeKey = createRecipeIdentity(normalized);
+
+  return {
+    ...normalized,
+    id: recipeKey,
+    recipeKey
+  };
+}
+
+function normalizeRecipesPayload(payload: { recipes: RawRecipe[] }): RecipesPayload {
+  const uniqueRecipes = new Map<string, ReturnType<typeof normalizeRecipe>>();
+
+  for (const recipe of payload.recipes) {
+    const normalizedRecipe = normalizeRecipe(recipe);
+
+    if (!uniqueRecipes.has(normalizedRecipe.recipeKey)) {
+      uniqueRecipes.set(normalizedRecipe.recipeKey, normalizedRecipe);
+    }
+  }
+
+  if (uniqueRecipes.size !== 4) {
+    throw new Error("OpenAI returned duplicate or incomplete recipes.");
+  }
+
+  return recipesPayloadSchema.parse({
+    recipes: [...uniqueRecipes.values()]
+  });
+}
 
 function getMeasurementGuidance(system: MeasurementSystem) {
   if (system === "american") {
@@ -67,7 +115,7 @@ export async function generateRecipesFromIngredients(
     ],
     max_output_tokens: 3200,
     text: {
-      format: zodTextFormat(recipesPayloadSchema, "mealio_recipe_suggestions")
+      format: zodTextFormat(rawRecipesPayloadSchema, "mealio_recipe_suggestions")
     }
   });
 
@@ -75,5 +123,5 @@ export async function generateRecipesFromIngredients(
     throw new Error("OpenAI did not return valid recipe data.");
   }
 
-  return recipesPayloadSchema.parse(response.output_parsed);
+  return normalizeRecipesPayload(rawRecipesPayloadSchema.parse(response.output_parsed));
 }

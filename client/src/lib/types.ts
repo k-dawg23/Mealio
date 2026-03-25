@@ -5,6 +5,7 @@ export type LanguageCode = "en-GB" | "fr-FR" | "de-DE" | "it-IT" | "pt-PT" | "es
 
 export interface Recipe {
   id: string;
+  recipeKey: string;
   title: string;
   description: string;
   cookTime: string;

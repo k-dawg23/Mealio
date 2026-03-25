@@ -5,6 +5,7 @@ import { RecipeModal } from "./components/RecipeModal";
 import { getExtraIngredients } from "./lib/ingredientComparison";
 import { getTranslations, languageOptions } from "./lib/i18n";
 import { getRecipeImageKey } from "./lib/recipeImageKey";
+import { normalizeRecipeIdentity } from "./lib/recipeIdentity";
 import {
   loadBookmarks,
   loadLanguage,
@@ -159,7 +160,7 @@ export default function App() {
       const payload = (await response.json()) as { recipes: Recipe[] };
       setRecipes(
         payload.recipes.map((recipe) => ({
-          ...recipe,
+          ...normalizeRecipeIdentity(recipe),
           requestedIngredients: [...search.ingredients]
         }))
       );
