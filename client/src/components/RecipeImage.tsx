@@ -9,6 +9,7 @@ interface RecipeImageProps {
     imageLoadingLabel: string;
     imageUnavailableTitle: string;
     imageUnavailableCopy: string;
+    imageUnavailableDetail: string;
     imageRetry: string;
   };
   onRetry?: () => void;
@@ -31,6 +32,7 @@ export function RecipeImage({ title, imageUrl, status, copy, onRetry, fallbackBa
           {fallbackBadge ? <div className="recipe-image-badge">{fallbackBadge}</div> : null}
           <strong>{copy.imageUnavailableTitle}</strong>
           <p>{copy.imageUnavailableCopy}</p>
+          <p className="recipe-image-fallback-detail">{copy.imageUnavailableDetail}</p>
           {onRetry ? (
             <button className="recipe-image-retry" type="button" onClick={onRetry}>
               {copy.imageRetry}
