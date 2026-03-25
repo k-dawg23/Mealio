@@ -53,6 +53,14 @@
 - Updated the server request and prompt so OpenAI generates recipes in the selected measurement style
 - Added measurement preference to the cache key so different format variants do not collide
 
+### Language support
+
+- Added a flag-based language selector for English (UK), French, German, Italian, Portuguese (Portugal), and Spanish (Spain)
+- Localized app UI copy including headings, labels, buttons, placeholders, tabs, and modal text
+- Saved the selected language in browser `localStorage` so the language choice persists across sessions
+- Sent the selected language to the server and OpenAI request so recipe content is generated in the chosen language
+- Refined the hero placement of the flag selector so it sits naturally in the hero layout and stays on a single row across breakpoints
+
 ### Ingredient comparison
 
 - Added recipe ingredient comparison against the user-entered ingredient list for each suggestion batch

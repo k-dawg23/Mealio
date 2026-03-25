@@ -5,7 +5,11 @@ import { fileURLToPath } from "node:url";
 import { getCachedRecipes, setCachedRecipes } from "./cache.js";
 import { generatedImagesDir } from "./imageCache.js";
 import { ensureRecipeImage } from "./imageGeneration.js";
-import { generateRecipesFromIngredients, type MeasurementSystem } from "./openai.js";
+import {
+  generateRecipesFromIngredients,
+  type LanguageCode,
+  type MeasurementSystem
+} from "./openai.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 3001);
@@ -33,6 +37,16 @@ function normalizeMeasurementSystem(input: unknown): MeasurementSystem {
   return input === "american" ? "american" : "european";
 }
 
+function normalizeLanguage(input: unknown): LanguageCode {
+  return input === "fr-FR" ||
+    input === "de-DE" ||
+    input === "it-IT" ||
+    input === "pt-PT" ||
+    input === "es-ES"
+    ? input
+    : "en-GB";
+}
+
 app.get("/api/health", (_request, response) => {
   response.json({ ok: true });
 });
@@ -40,13 +54,14 @@ app.get("/api/health", (_request, response) => {
 app.post("/api/recipes/suggest", async (request, response) => {
   const ingredients = normalizeIngredients(request.body?.ingredients);
   const measurementSystem = normalizeMeasurementSystem(request.body?.measurementSystem);
+  const language = normalizeLanguage(request.body?.language);
 
   if (ingredients.length === 0) {
     response.status(400).json({ error: "Add at least one ingredient first." });
     return;
   }
 
-  const cacheKey = `${measurementSystem}:${ingredients.join("|")}`;
+  const cacheKey = `${language}:${measurementSystem}:${ingredients.join("|")}`;
 
   try {
     const cached = await getCachedRecipes(cacheKey);
@@ -56,7 +71,7 @@ app.post("/api/recipes/suggest", async (request, response) => {
       return;
     }
 
-    const payload = await generateRecipesFromIngredients(ingredients, measurementSystem);
+    const payload = await generateRecipesFromIngredients(ingredients, measurementSystem, language);
     await setCachedRecipes(cacheKey, payload);
     response.json(payload);
   } catch (error) {

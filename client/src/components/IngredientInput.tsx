@@ -13,6 +13,23 @@ interface IngredientInputProps {
   isLoading: boolean;
   measurementSystem: MeasurementSystem;
   onMeasurementSystemChange: (system: MeasurementSystem) => void;
+  copy: {
+    ingredientsEyebrow: string;
+    ingredientsTitle: string;
+    ingredientsCopy: string;
+    addButton: string;
+    ingredientPlaceholder: string;
+    noIngredients: string;
+    recipeFormatLabel: string;
+    formatEuropean: string;
+    formatAmerican: string;
+    suggestButton: string;
+    suggestLoading: string;
+    recentSearchesLabel: string;
+    recentSearchesCopy: string;
+    recentSearchesEmpty: string;
+    clearHistory: string;
+  };
 }
 
 export function IngredientInput({
@@ -25,7 +42,8 @@ export function IngredientInput({
   onClearRecentSearches,
   isLoading,
   measurementSystem,
-  onMeasurementSystemChange
+  onMeasurementSystemChange,
+  copy
 }: IngredientInputProps) {
   const [value, setValue] = useState("");
 
@@ -51,12 +69,9 @@ export function IngredientInput({
   return (
     <section className="panel">
       <div className="panel-copy">
-        <p className="eyebrow">Your ingredients</p>
-        <h2>Build your basket one ingredient at a time.</h2>
-        <p>
-          Add what you already have in the kitchen. Mealio will suggest four
-          realistic recipe ideas that make use of those ingredients.
-        </p>
+        <p className="eyebrow">{copy.ingredientsEyebrow}</p>
+        <h2>{copy.ingredientsTitle}</h2>
+        <p>{copy.ingredientsCopy}</p>
       </div>
 
       <form className="ingredient-form" onSubmit={submitIngredient}>
@@ -69,16 +84,16 @@ export function IngredientInput({
           value={value}
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Try chicken, spinach, rice..."
+          placeholder={copy.ingredientPlaceholder}
         />
         <button className="azure-button" type="submit">
-          Add
+          {copy.addButton}
         </button>
       </form>
 
       <div className="ingredient-tags" aria-live="polite">
         {ingredients.length === 0 ? (
-          <p className="empty-hint">No ingredients added yet.</p>
+          <p className="empty-hint">{copy.noIngredients}</p>
         ) : (
           ingredients.map((ingredient) => (
             <button
@@ -96,21 +111,21 @@ export function IngredientInput({
       </div>
 
       <div className="format-picker ingredient-format-picker">
-        <p className="eyebrow">Recipe format</p>
+        <p className="eyebrow">{copy.recipeFormatLabel}</p>
         <div className="segmented-control">
           <button
             type="button"
             className={measurementSystem === "european" ? "active" : ""}
             onClick={() => onMeasurementSystemChange("european")}
           >
-            European
+            {copy.formatEuropean}
           </button>
           <button
             type="button"
             className={measurementSystem === "american" ? "active" : ""}
             onClick={() => onMeasurementSystemChange("american")}
           >
-            American
+            {copy.formatAmerican}
           </button>
         </div>
       </div>
@@ -121,16 +136,14 @@ export function IngredientInput({
         onClick={onSuggestRecipes}
         disabled={isLoading || ingredients.length === 0}
       >
-        {isLoading ? "Finding recipes..." : "Suggest Recipes"}
+        {isLoading ? copy.suggestLoading : copy.suggestButton}
       </button>
 
       <div className="recent-searches">
         <div className="recent-searches-header">
           <div>
-            <p className="eyebrow">Recent searches</p>
-            <p className="recent-searches-copy">
-              Tap a previous ingredient combination to run it again.
-            </p>
+            <p className="eyebrow">{copy.recentSearchesLabel}</p>
+            <p className="recent-searches-copy">{copy.recentSearchesCopy}</p>
           </div>
           <button
             className="recent-searches-clear"
@@ -138,12 +151,12 @@ export function IngredientInput({
             onClick={onClearRecentSearches}
             disabled={recentSearches.length === 0}
           >
-            Clear history
+            {copy.clearHistory}
           </button>
         </div>
 
         {recentSearches.length === 0 ? (
-          <p className="empty-hint">Your last 20 searches will appear here.</p>
+          <p className="empty-hint">{copy.recentSearchesEmpty}</p>
         ) : (
           <div className="recent-search-list">
             {recentSearches.map((search) => (

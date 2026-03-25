@@ -1,6 +1,7 @@
 export type Difficulty = "Easy" | "Medium" | "Hard";
 export type MeasurementSystem = "european" | "american";
 export type RecipeImageStatus = "idle" | "loading" | "ready" | "error";
+export type LanguageCode = "en-GB" | "fr-FR" | "de-DE" | "it-IT" | "pt-PT" | "es-ES";
 
 export interface Recipe {
   id: string;
