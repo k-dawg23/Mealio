@@ -11,6 +11,7 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - Display recipe cards with title, description, cook time, and difficulty
 - Show extra ingredients to buy as small azure badges on recipe cards, based on the ingredients entered for that recipe search
 - Open a modal for ingredients and step-by-step instructions
+- Keep long recipe details scrollable within the rounded modal card so full ingredients and instructions remain accessible on mobile and desktop
 - Bookmark recipes in `localStorage`
 - Default recipe measurements to European format with a user switch for European or American recipe output
 - Generate recipe photos in the background with loading placeholders, then reuse cached images on later views

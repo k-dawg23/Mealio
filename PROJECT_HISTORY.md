@@ -37,6 +37,7 @@
 - Simplified the hero panel messaging to stay user-facing and recipe-relevant
 - Reduced the mobile hero so ingredient entry is visible without scrolling
 - Moved recipe save actions into the recipe details modal and fixed modal layering above page content
+- Updated long recipe detail modals to scroll inside the rounded card so full content stays accessible without the scrollbar breaking the card edge
 
 ### OpenAI reliability
 
