@@ -7,6 +7,9 @@ interface IngredientInputProps {
   onAddIngredient: (ingredient: string) => void;
   onRemoveIngredient: (ingredient: string) => void;
   onSuggestRecipes: () => void;
+  recentSearches: string[][];
+  onRunRecentSearch: (ingredients: string[]) => void;
+  onClearRecentSearches: () => void;
   isLoading: boolean;
   measurementSystem: MeasurementSystem;
   onMeasurementSystemChange: (system: MeasurementSystem) => void;
@@ -17,6 +20,9 @@ export function IngredientInput({
   onAddIngredient,
   onRemoveIngredient,
   onSuggestRecipes,
+  recentSearches,
+  onRunRecentSearch,
+  onClearRecentSearches,
   isLoading,
   measurementSystem,
   onMeasurementSystemChange
@@ -117,6 +123,42 @@ export function IngredientInput({
       >
         {isLoading ? "Finding recipes..." : "Suggest Recipes"}
       </button>
+
+      <div className="recent-searches">
+        <div className="recent-searches-header">
+          <div>
+            <p className="eyebrow">Recent searches</p>
+            <p className="recent-searches-copy">
+              Tap a previous ingredient combination to run it again.
+            </p>
+          </div>
+          <button
+            className="recent-searches-clear"
+            type="button"
+            onClick={onClearRecentSearches}
+            disabled={recentSearches.length === 0}
+          >
+            Clear history
+          </button>
+        </div>
+
+        {recentSearches.length === 0 ? (
+          <p className="empty-hint">Your last 20 searches will appear here.</p>
+        ) : (
+          <div className="recent-search-list">
+            {recentSearches.map((search) => (
+              <button
+                key={search.join("|")}
+                type="button"
+                className="recent-search-chip"
+                onClick={() => onRunRecentSearch(search)}
+              >
+                {search.join(", ")}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </section>
   );
 }

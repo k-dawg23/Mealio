@@ -29,6 +29,7 @@
 - Added `README.md` with setup, build, and deployment notes
 - Prepared the project to be committed to its own GitHub repository later
 - Added the Mealio logo to the README for repository presentation
+- Added a project note to keep future repo-facing wording and commit messaging in English only
 
 ### Visual refinement and UX fixes
 
@@ -57,6 +58,14 @@
 - Added recipe ingredient comparison against the user-entered ingredient list for each suggestion batch
 - Ignored common pantry staples such as salt, pepper, oil, butter, garlic, onion, sugar, and flour during extra-ingredient detection
 - Displayed non-pantry extra ingredients as compact azure badges on recipe cards so users can quickly see what they still need to buy
+- Switched bookmark identity to recipe content instead of AI-provided recipe ids so fresh suggestions do not incorrectly appear as already saved when the model reuses ids
+
+### Search history
+
+- Added recent searches below the ingredient input with a mobile-friendly and desktop-friendly layout
+- Stored the last 20 ingredient combinations in browser `localStorage`
+- Added de-duplication so repeated ingredient combinations do not create duplicate history entries
+- Added click-to-rerun behavior for previous searches and a clear-history control
 
 ### Recipe images
 
