@@ -482,15 +482,27 @@ button {
   place-items: center;
   padding: 1rem;
   z-index: 50;
+  overflow-y: auto;
 }
 
 .modal-card {
   width: min(760px, 100%);
   border-radius: 3rem;
-  padding: 1.2rem;
   position: relative;
   background: rgba(255, 248, 244, 0.7);
   backdrop-filter: blur(24px);
+  max-height: min(92vh, 980px);
+  overflow: hidden;
+  padding: 0;
+}
+
+.modal-scroll-area {
+  position: relative;
+  max-height: min(92vh, 980px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.2rem;
+  scrollbar-gutter: stable;
 }
 
 .modal-bookmark-button {
@@ -515,6 +527,10 @@ button {
   display: grid;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.modal-grid section {
+  min-width: 0;
 }
 
 .modal-card .recipe-image-frame {
@@ -581,6 +597,32 @@ button {
 }
 
 @media (max-width: 759px) {
+  .modal-backdrop {
+    padding: 0.6rem;
+    align-items: start;
+  }
+
+  .modal-card {
+    width: 100%;
+    max-height: 94vh;
+    border-radius: 2rem;
+  }
+
+  .modal-scroll-area {
+    max-height: 94vh;
+    padding: 1rem 1rem 1.2rem;
+  }
+
+  .modal-bookmark-button {
+    top: 0.75rem;
+    right: 3.55rem;
+  }
+
+  .modal-close {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
   .hero {
     padding: 0.9rem 1rem 1rem;
     border-radius: 2.25rem;
