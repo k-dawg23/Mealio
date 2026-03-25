@@ -1,10 +1,11 @@
+import type { MouseEvent } from "react";
 import { translateDifficulty } from "../lib/i18n";
 import type { LanguageCode, Recipe, RecipeImageStatus } from "../lib/types";
 import { RecipeImage } from "./RecipeImage";
 
 interface RecipeCardProps {
   recipe: Recipe;
-  onOpen: (recipe: Recipe) => void;
+  onOpen: (recipe: Recipe, trigger: HTMLButtonElement) => void;
   imageUrl?: string;
   imageStatus: RecipeImageStatus;
   extraIngredients: string[];
@@ -28,9 +29,13 @@ export function RecipeCard({
   extraIngredientsAria,
   copy
 }: RecipeCardProps) {
+  function handleOpen(event: MouseEvent<HTMLButtonElement>) {
+    onOpen(recipe, event.currentTarget);
+  }
+
   return (
     <article className="recipe-card">
-      <button className="recipe-card-hitbox" type="button" onClick={() => onOpen(recipe)}>
+      <button className="recipe-card-hitbox" type="button" onClick={handleOpen}>
         <RecipeImage
           title={recipe.title}
           imageUrl={imageUrl}

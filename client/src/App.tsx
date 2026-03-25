@@ -39,7 +39,10 @@ export default function App() {
   );
   const [recipeImages, setRecipeImages] = useState<Record<string, RecipeImageState>>({});
   const [recentSearches, setRecentSearches] = useState<RecentSearchEntry[]>(() => loadRecentSearches());
+  const [liveMessage, setLiveMessage] = useState("");
   const suggestAbortRef = useRef<AbortController | null>(null);
+  const lastTriggerRef = useRef<HTMLElement | null>(null);
+  const copy = getTranslations(language);
 
   useEffect(() => {
     saveBookmarks(bookmarks);
@@ -59,6 +62,12 @@ export default function App() {
   }, [recentSearches]);
 
   useEffect(() => () => suggestAbortRef.current?.abort(), []);
+
+  useEffect(() => {
+    if (isLoading) {
+      setLiveMessage(copy.resultsLoadingTitle);
+    }
+  }, [copy.resultsLoadingTitle, isLoading]);
 
   useEffect(() => {
     const uniqueRecipes = new Map<string, Recipe>();
@@ -103,7 +112,6 @@ export default function App() {
     () => new Set(bookmarks.map((recipe) => getRecipeImageKey(recipe))),
     [bookmarks]
   );
-  const copy = getTranslations(language);
   const visibleRecipes = viewMode === "saved" ? bookmarks : recipes;
   const showSuggestionsLoadingState = viewMode === "suggested" && isLoading && recipes.length === 0;
   const showSuggestionsErrorState = viewMode === "suggested" && !isLoading && !!error && recipes.length === 0;
@@ -155,6 +163,7 @@ export default function App() {
           requestedIngredients: [...search.ingredients]
         }))
       );
+      setLiveMessage(copy.recipesLoadedAnnouncement.replace("{count}", String(payload.recipes.length)));
       const normalizedSearch = [...search.ingredients];
       const searchKey = createRecentSearchKey(normalizedSearch);
 
@@ -173,6 +182,7 @@ export default function App() {
           ? fetchError.message
           : copy.fetchError;
       setError(message);
+      setLiveMessage(message);
     } finally {
       if (suggestAbortRef.current === controller) {
         suggestAbortRef.current = null;
@@ -201,11 +211,15 @@ export default function App() {
     setIngredients(search.ingredients);
     setMeasurementSystem(search.measurementSystem);
     setLanguage(search.language);
+    setLiveMessage(
+      copy.recentSearchRestoredAnnouncement.replace("{ingredients}", search.ingredients.join(", "))
+    );
     void suggestRecipes(search);
   }
 
   function clearRecentSearches() {
     setRecentSearches([]);
+    setLiveMessage(copy.recentSearchesClearedAnnouncement);
   }
 
   function toggleBookmark(recipe: Recipe) {
@@ -225,6 +239,18 @@ export default function App() {
       [key]: { status: "loading" }
     }));
     void ensureRecipeImage(recipe, key);
+  }
+
+  function openRecipe(recipe: Recipe, trigger: HTMLButtonElement) {
+    lastTriggerRef.current = trigger;
+    setSelectedRecipe(recipe);
+  }
+
+  function closeRecipeModal() {
+    setSelectedRecipe(null);
+    window.requestAnimationFrame(() => {
+      lastTriggerRef.current?.focus();
+    });
   }
 
   async function ensureRecipeImage(recipe: Recipe, key: string, attempt = 0): Promise<void> {
@@ -283,6 +309,9 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {liveMessage}
+      </div>
       <header className="hero">
         <div className="hero-brand">
           <div className="hero-copy-wrap">
@@ -308,6 +337,7 @@ export default function App() {
                   className={`language-flag-button ${language === option.code ? "active" : ""}`}
                   onClick={() => setLanguage(option.code)}
                   aria-label={option.label}
+                  aria-pressed={language === option.code}
                   title={option.label}
                 >
                   <span aria-hidden="true">{option.flag}</span>
@@ -349,7 +379,7 @@ export default function App() {
         />
 
         <section className="results-panel">
-          <div className="results-header">
+          <div className="results-header" aria-live="polite" aria-busy={viewMode === "suggested" && isLoading}>
             <div>
               <p className="eyebrow">{copy.recipesEyebrow}</p>
               <h2>{viewMode === "saved" ? copy.savedTitle : copy.suggestedTitle}</h2>
@@ -359,6 +389,7 @@ export default function App() {
                 type="button"
                 className={viewMode === "suggested" ? "active" : ""}
                 onClick={() => setViewMode("suggested")}
+                aria-pressed={viewMode === "suggested"}
               >
                 {copy.suggestionsTab}
               </button>
@@ -366,6 +397,7 @@ export default function App() {
                 type="button"
                 className={viewMode === "saved" ? "active" : ""}
                 onClick={() => setViewMode("saved")}
+                aria-pressed={viewMode === "saved"}
               >
                 {copy.bookmarksTab} ({bookmarks.length})
               </button>
@@ -411,7 +443,7 @@ export default function App() {
                 <RecipeCard
                   key={getRecipeImageKey(recipe)}
                   recipe={recipe}
-                  onOpen={setSelectedRecipe}
+                  onOpen={openRecipe}
                   imageUrl={imageState?.imageUrl ?? recipe.imageUrl}
                   imageStatus={imageState.status}
                   extraIngredients={getExtraIngredients(recipe)}
@@ -442,7 +474,7 @@ export default function App() {
             ? recipeImages[getRecipeImageKey(selectedRecipe)]?.status ?? "idle"
             : "idle"
         }
-        onClose={() => setSelectedRecipe(null)}
+        onClose={closeRecipeModal}
         onToggleBookmark={toggleBookmark}
         onRetryImage={retryRecipeImage}
         copy={copy}
