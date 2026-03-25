@@ -13,6 +13,7 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - Open a modal for ingredients and step-by-step instructions
 - Keep long recipe details scrollable within the rounded modal card so full ingredients and instructions remain accessible on mobile and desktop
 - Bookmark recipes in `localStorage`
+- Show recent searches below the ingredient input, keep the latest 20 in localStorage, and allow one-tap reruns with a clear-history option
 - Default recipe measurements to European format with a user switch for European or American recipe output
 - Generate recipe photos in the background with loading placeholders, then reuse cached images on later views
 - Cache repeated ingredient combinations on the server to avoid duplicate OpenAI calls
@@ -109,6 +110,15 @@ When recipes are returned from the AI, Mealio compares each recipe ingredient li
 - Ingredients the user already entered are treated as available, even when the recipe uses a more specific phrasing like `chicken breast` vs `chicken`
 - Common pantry staples such as salt, pepper, oil, butter, garlic, onion, sugar, and flour are ignored
 - Any remaining extras are shown on the recipe card as small azure badges so it is easy to see what still needs buying
+- Bookmark matching uses recipe content rather than the model-provided `id`, so newly generated recipes do not collide with older saved recipes that happen to reuse the same AI id values
+
+## Recent Searches
+
+Mealio stores the last 20 ingredient combinations in browser `localStorage`.
+
+- Repeated searches are de-duplicated so the same ingredient combination only appears once
+- Each recent search can be tapped to repopulate the ingredients and rerun the request
+- A clear-history button removes the saved recent searches
 
 ## Recipe Images
 

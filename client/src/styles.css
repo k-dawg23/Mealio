@@ -315,6 +315,54 @@ button {
   margin-bottom: 1rem;
 }
 
+.recent-searches {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.recent-searches-header {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.recent-searches-copy {
+  margin: 0;
+  color: rgba(72, 45, 0, 0.68);
+}
+
+.recent-searches-clear {
+  justify-self: start;
+  border: 0;
+  border-radius: 999px;
+  min-height: 40px;
+  padding: 0 0.95rem;
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.recent-searches-clear:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.recent-search-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.recent-search-chip {
+  border: 0;
+  border-radius: 1.4rem;
+  padding: 0.75rem 0.9rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: #482d00;
+  text-align: left;
+  line-height: 1.4;
+}
+
 .segmented-control {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -581,6 +629,15 @@ button {
 
   .ingredient-format-picker {
     width: min(360px, 100%);
+  }
+
+  .recent-searches-header {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+
+  .recent-searches-clear {
+    justify-self: end;
   }
 
   .recipe-grid {

@@ -7,8 +7,10 @@ import { getRecipeImageKey } from "./lib/recipeImageKey";
 import {
   loadBookmarks,
   loadMeasurementSystem,
+  loadRecentSearches,
   saveBookmarks,
-  saveMeasurementSystem
+  saveMeasurementSystem,
+  saveRecentSearches
 } from "./lib/storage";
 import type { MeasurementSystem, Recipe, RecipeImageState } from "./lib/types";
 
@@ -26,6 +28,7 @@ export default function App() {
     loadMeasurementSystem()
   );
   const [recipeImages, setRecipeImages] = useState<Record<string, RecipeImageState>>({});
+  const [recentSearches, setRecentSearches] = useState<string[][]>(() => loadRecentSearches());
 
   useEffect(() => {
     saveBookmarks(bookmarks);
@@ -34,6 +37,10 @@ export default function App() {
   useEffect(() => {
     saveMeasurementSystem(measurementSystem);
   }, [measurementSystem]);
+
+  useEffect(() => {
+    saveRecentSearches(recentSearches);
+  }, [recentSearches]);
 
   useEffect(() => {
     const uniqueRecipes = new Map<string, Recipe>();
@@ -75,12 +82,12 @@ export default function App() {
   }, [bookmarks, recipeImages, recipes, selectedRecipe]);
 
   const bookmarkedIds = useMemo(
-    () => new Set(bookmarks.map((recipe) => recipe.id)),
+    () => new Set(bookmarks.map((recipe) => getRecipeImageKey(recipe))),
     [bookmarks]
   );
 
-  async function suggestRecipes() {
-    if (ingredients.length === 0) {
+  async function suggestRecipes(searchIngredients = ingredients) {
+    if (searchIngredients.length === 0) {
       return;
     }
 
@@ -94,7 +101,7 @@ export default function App() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ingredients, measurementSystem })
+        body: JSON.stringify({ ingredients: searchIngredients, measurementSystem })
       });
 
       if (!response.ok) {
@@ -106,9 +113,26 @@ export default function App() {
       setRecipes(
         payload.recipes.map((recipe) => ({
           ...recipe,
-          requestedIngredients: [...ingredients]
+          requestedIngredients: [...searchIngredients]
         }))
       );
+      const normalizedSearch = [...searchIngredients];
+      const searchKey = normalizedSearch
+        .map((ingredient) => ingredient.trim().toLowerCase())
+        .sort()
+        .join("|");
+
+      setRecentSearches((current) => {
+        const deduped = current.filter((entry) => {
+          const entryKey = [...entry]
+            .map((ingredient) => ingredient.trim().toLowerCase())
+            .sort()
+            .join("|");
+          return entryKey !== searchKey;
+        });
+
+        return [normalizedSearch, ...deduped].slice(0, 20);
+      });
     } catch (fetchError) {
       const message =
         fetchError instanceof Error
@@ -136,11 +160,21 @@ export default function App() {
     setIngredients((current) => current.filter((item) => item !== ingredient));
   }
 
+  function runRecentSearch(searchIngredients: string[]) {
+    setIngredients(searchIngredients);
+    void suggestRecipes(searchIngredients);
+  }
+
+  function clearRecentSearches() {
+    setRecentSearches([]);
+  }
+
   function toggleBookmark(recipe: Recipe) {
     setBookmarks((current) => {
-      const exists = current.some((item) => item.id === recipe.id);
+      const recipeKey = getRecipeImageKey(recipe);
+      const exists = current.some((item) => getRecipeImageKey(item) === recipeKey);
       return exists
-        ? current.filter((item) => item.id !== recipe.id)
+        ? current.filter((item) => getRecipeImageKey(item) !== recipeKey)
         : [recipe, ...current];
     });
   }
@@ -247,7 +281,10 @@ export default function App() {
           ingredients={ingredients}
           onAddIngredient={addIngredient}
           onRemoveIngredient={removeIngredient}
-          onSuggestRecipes={suggestRecipes}
+          onSuggestRecipes={() => void suggestRecipes()}
+          recentSearches={recentSearches}
+          onRunRecentSearch={runRecentSearch}
+          onClearRecentSearches={clearRecentSearches}
           isLoading={isLoading}
           measurementSystem={measurementSystem}
           onMeasurementSystemChange={setMeasurementSystem}
@@ -316,7 +353,9 @@ export default function App() {
 
       <RecipeModal
         recipe={selectedRecipe}
-        isBookmarked={selectedRecipe ? bookmarkedIds.has(selectedRecipe.id) : false}
+        isBookmarked={
+          selectedRecipe ? bookmarkedIds.has(getRecipeImageKey(selectedRecipe)) : false
+        }
         imageUrl={
           selectedRecipe
             ? recipeImages[getRecipeImageKey(selectedRecipe)]?.imageUrl ?? selectedRecipe.imageUrl
