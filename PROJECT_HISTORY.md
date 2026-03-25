@@ -51,6 +51,12 @@
 - Updated the server request and prompt so OpenAI generates recipes in the selected measurement style
 - Added measurement preference to the cache key so different format variants do not collide
 
+### Ingredient comparison
+
+- Added recipe ingredient comparison against the user-entered ingredient list for each suggestion batch
+- Ignored common pantry staples such as salt, pepper, oil, butter, garlic, onion, sugar, and flour during extra-ingredient detection
+- Displayed non-pantry extra ingredients as compact azure badges on recipe cards so users can quickly see what they still need to buy
+
 ### Recipe images
 
 - Added background recipe image generation using OpenAI `gpt-image-1-mini`

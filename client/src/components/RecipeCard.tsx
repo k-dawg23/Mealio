@@ -6,9 +6,16 @@ interface RecipeCardProps {
   onOpen: (recipe: Recipe) => void;
   imageUrl?: string;
   isImageLoading: boolean;
+  extraIngredients: string[];
 }
 
-export function RecipeCard({ recipe, onOpen, imageUrl, isImageLoading }: RecipeCardProps) {
+export function RecipeCard({
+  recipe,
+  onOpen,
+  imageUrl,
+  isImageLoading,
+  extraIngredients
+}: RecipeCardProps) {
   return (
     <article className="recipe-card">
       <button className="recipe-card-hitbox" type="button" onClick={() => onOpen(recipe)}>
@@ -21,6 +28,15 @@ export function RecipeCard({ recipe, onOpen, imageUrl, isImageLoading }: RecipeC
         </div>
         <h3>{recipe.title}</h3>
         <p>{recipe.description}</p>
+        {extraIngredients.length > 0 ? (
+          <div className="extra-ingredients" aria-label="Extra ingredients needed">
+            {extraIngredients.map((ingredient) => (
+              <span key={ingredient} className="extra-ingredient-badge">
+                {ingredient}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </button>
     </article>
   );

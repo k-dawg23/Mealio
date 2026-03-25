@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { IngredientInput } from "./components/IngredientInput";
 import { RecipeCard } from "./components/RecipeCard";
 import { RecipeModal } from "./components/RecipeModal";
+import { getExtraIngredients } from "./lib/ingredientComparison";
 import { getRecipeImageKey } from "./lib/recipeImageKey";
 import {
   loadBookmarks,
@@ -102,7 +103,12 @@ export default function App() {
       }
 
       const payload = (await response.json()) as { recipes: Recipe[] };
-      setRecipes(payload.recipes);
+      setRecipes(
+        payload.recipes.map((recipe) => ({
+          ...recipe,
+          requestedIngredients: [...ingredients]
+        }))
+      );
     } catch (fetchError) {
       const message =
         fetchError instanceof Error
@@ -298,6 +304,7 @@ export default function App() {
                   onOpen={setSelectedRecipe}
                   imageUrl={imageState?.imageUrl ?? recipe.imageUrl}
                   isImageLoading={imageState?.status === "loading"}
+                  extraIngredients={getExtraIngredients(recipe)}
                 />
                   );
                 })()

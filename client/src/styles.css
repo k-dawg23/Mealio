@@ -409,6 +409,24 @@ button {
   font-size: 1.35rem;
 }
 
+.extra-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.extra-ingredient-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--secondary-container);
+  color: #005780;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 .recipe-meta {
   display: flex;
   gap: 0.55rem;
