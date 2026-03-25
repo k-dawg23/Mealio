@@ -1,4 +1,5 @@
-import type { Recipe } from "../lib/types";
+import { translateDifficulty } from "../lib/i18n";
+import type { LanguageCode, Recipe } from "../lib/types";
 import { RecipeImage } from "./RecipeImage";
 
 interface RecipeCardProps {
@@ -7,6 +8,8 @@ interface RecipeCardProps {
   imageUrl?: string;
   isImageLoading: boolean;
   extraIngredients: string[];
+  language: LanguageCode;
+  extraIngredientsAria: string;
 }
 
 export function RecipeCard({
@@ -14,7 +17,9 @@ export function RecipeCard({
   onOpen,
   imageUrl,
   isImageLoading,
-  extraIngredients
+  extraIngredients,
+  language,
+  extraIngredientsAria
 }: RecipeCardProps) {
   return (
     <article className="recipe-card">
@@ -23,13 +28,13 @@ export function RecipeCard({
         <div className="recipe-meta">
           <span className="time-pill">{recipe.cookTime}</span>
           <span className={`difficulty-badge difficulty-${recipe.difficulty.toLowerCase()}`}>
-            {recipe.difficulty}
+            {translateDifficulty(language, recipe.difficulty)}
           </span>
         </div>
         <h3>{recipe.title}</h3>
         <p>{recipe.description}</p>
         {extraIngredients.length > 0 ? (
-          <div className="extra-ingredients" aria-label="Extra ingredients needed">
+          <div className="extra-ingredients" aria-label={extraIngredientsAria}>
             {extraIngredients.map((ingredient) => (
               <span key={ingredient} className="extra-ingredient-badge">
                 {ingredient}

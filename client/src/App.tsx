@@ -3,16 +3,19 @@ import { IngredientInput } from "./components/IngredientInput";
 import { RecipeCard } from "./components/RecipeCard";
 import { RecipeModal } from "./components/RecipeModal";
 import { getExtraIngredients } from "./lib/ingredientComparison";
+import { getTranslations, languageOptions } from "./lib/i18n";
 import { getRecipeImageKey } from "./lib/recipeImageKey";
 import {
   loadBookmarks,
+  loadLanguage,
   loadMeasurementSystem,
   loadRecentSearches,
   saveBookmarks,
+  saveLanguage,
   saveMeasurementSystem,
   saveRecentSearches
 } from "./lib/storage";
-import type { MeasurementSystem, Recipe, RecipeImageState } from "./lib/types";
+import type { LanguageCode, MeasurementSystem, Recipe, RecipeImageState } from "./lib/types";
 
 type ViewMode = "suggested" | "saved";
 
@@ -24,6 +27,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("suggested");
+  const [language, setLanguage] = useState<LanguageCode>(() => loadLanguage());
   const [measurementSystem, setMeasurementSystem] = useState<MeasurementSystem>(() =>
     loadMeasurementSystem()
   );
@@ -37,6 +41,11 @@ export default function App() {
   useEffect(() => {
     saveMeasurementSystem(measurementSystem);
   }, [measurementSystem]);
+
+  useEffect(() => {
+    saveLanguage(language);
+    document.documentElement.lang = language;
+  }, [language]);
 
   useEffect(() => {
     saveRecentSearches(recentSearches);
@@ -85,6 +94,7 @@ export default function App() {
     () => new Set(bookmarks.map((recipe) => getRecipeImageKey(recipe))),
     [bookmarks]
   );
+  const copy = getTranslations(language);
 
   async function suggestRecipes(searchIngredients = ingredients) {
     if (searchIngredients.length === 0) {
@@ -101,7 +111,7 @@ export default function App() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ingredients: searchIngredients, measurementSystem })
+        body: JSON.stringify({ ingredients: searchIngredients, measurementSystem, language })
       });
 
       if (!response.ok) {
@@ -137,7 +147,7 @@ export default function App() {
       const message =
         fetchError instanceof Error
           ? fetchError.message
-          : "Something went wrong while suggesting recipes.";
+          : copy.fetchError;
       setError(message);
     } finally {
       setIsLoading(false);
@@ -240,38 +250,49 @@ export default function App() {
       <header className="hero">
         <div className="hero-brand">
           <div className="hero-copy-wrap">
-            <p className="eyebrow">AI recipe suggestion app</p>
-            <h1>Cook from what you already have.</h1>
-            <p className="hero-copy">
-              Add ingredients, get four structured recipe ideas, and save the
-              ones you want to make later.
-            </p>
+            <p className="eyebrow">{copy.heroEyebrow}</p>
+            <h1>{copy.heroTitle}</h1>
+            <p className="hero-copy">{copy.heroCopy}</p>
             <div className="hero-note">
               <span className="hero-note-dot" aria-hidden="true" />
-              Azure highlights mark Mealio's AI-powered guidance.
+              {copy.heroNote}
             </div>
           </div>
           <div className="hero-art">
             <img className="hero-logo" src="/assets/mealio-logo.png" alt="Mealio" />
             <div className="hero-floating-card">
-              <p className="stat-label">Magic mode</p>
-              <strong>Ingredient-led ideas with practical pantry staples</strong>
+              <p className="stat-label">{copy.heroMagicLabel}</p>
+              <strong>{copy.heroMagicText}</strong>
+            </div>
+            <div className="hero-language-picker" aria-label={copy.languageSelectorLabel}>
+              {languageOptions.map((option) => (
+                <button
+                  key={option.code}
+                  type="button"
+                  className={`language-flag-button ${language === option.code ? "active" : ""}`}
+                  onClick={() => setLanguage(option.code)}
+                  aria-label={option.label}
+                  title={option.label}
+                >
+                  <span aria-hidden="true">{option.flag}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="hero-panel">
           <div>
-            <p className="stat-label">Suggestions made simple</p>
-            <strong>4 recipes every time</strong>
+            <p className="stat-label">{copy.heroSimpleLabel}</p>
+            <strong>{copy.heroSimpleText}</strong>
           </div>
           <div>
-            <p className="stat-label">Azure assistance</p>
-            <strong>Helpful AI cues for smarter ingredient-led ideas</strong>
+            <p className="stat-label">{copy.heroAssistLabel}</p>
+            <strong>{copy.heroAssistText}</strong>
           </div>
           <div>
-            <p className="stat-label">Built for real kitchens</p>
-            <strong>Flexible recipe ideas based on what you already have</strong>
+            <p className="stat-label">{copy.heroKitchenLabel}</p>
+            <strong>{copy.heroKitchenText}</strong>
           </div>
         </div>
       </header>
@@ -288,13 +309,14 @@ export default function App() {
           isLoading={isLoading}
           measurementSystem={measurementSystem}
           onMeasurementSystemChange={setMeasurementSystem}
+          copy={copy}
         />
 
         <section className="results-panel">
           <div className="results-header">
             <div>
-              <p className="eyebrow">Recipes</p>
-              <h2>{viewMode === "saved" ? "Saved recipes" : "Suggested for you"}</h2>
+              <p className="eyebrow">{copy.recipesEyebrow}</p>
+              <h2>{viewMode === "saved" ? copy.savedTitle : copy.suggestedTitle}</h2>
             </div>
             <div className="segmented-control">
               <button
@@ -302,14 +324,14 @@ export default function App() {
                 className={viewMode === "suggested" ? "active" : ""}
                 onClick={() => setViewMode("suggested")}
               >
-                Suggestions
+                {copy.suggestionsTab}
               </button>
               <button
                 type="button"
                 className={viewMode === "saved" ? "active" : ""}
                 onClick={() => setViewMode("saved")}
               >
-                Bookmarks ({bookmarks.length})
+                {copy.bookmarksTab} ({bookmarks.length})
               </button>
             </div>
           </div>
@@ -320,12 +342,12 @@ export default function App() {
             <div className="empty-state">
               <img src="/assets/mealio-icon.png" alt="" aria-hidden="true" />
               <h3>
-                {viewMode === "saved" ? "No bookmarks yet" : "Ready when you are"}
+                {viewMode === "saved" ? copy.noBookmarksTitle : copy.readyTitle}
               </h3>
               <p>
                 {viewMode === "saved"
-                  ? "Save recipes you want to revisit and they’ll stay on this device."
-                  : "Add a few ingredients and Mealio will suggest recipes you can actually make."}
+                  ? copy.noBookmarksCopy
+                  : copy.readyCopy}
               </p>
             </div>
           ) : (
@@ -342,6 +364,8 @@ export default function App() {
                   imageUrl={imageState?.imageUrl ?? recipe.imageUrl}
                   isImageLoading={imageState?.status === "loading"}
                   extraIngredients={getExtraIngredients(recipe)}
+                  language={language}
+                  extraIngredientsAria={copy.extraIngredientsAria}
                 />
                   );
                 })()
@@ -368,6 +392,7 @@ export default function App() {
         }
         onClose={() => setSelectedRecipe(null)}
         onToggleBookmark={toggleBookmark}
+        copy={copy}
       />
     </div>
   );

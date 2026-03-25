@@ -1,8 +1,9 @@
-import type { MeasurementSystem, Recipe } from "./types";
+import type { LanguageCode, MeasurementSystem, Recipe } from "./types";
 
 const BOOKMARKS_KEY = "mealio.bookmarks";
 const MEASUREMENT_KEY = "mealio.measurement-system";
 const RECENT_SEARCHES_KEY = "mealio.recent-searches";
+const LANGUAGE_KEY = "mealio.language";
 
 export function loadBookmarks(): Recipe[] {
   if (typeof window === "undefined") {
@@ -61,4 +62,27 @@ export function saveRecentSearches(searches: string[][]) {
   }
 
   window.localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+}
+
+export function loadLanguage(): LanguageCode {
+  if (typeof window === "undefined") {
+    return "en-GB";
+  }
+
+  const raw = window.localStorage.getItem(LANGUAGE_KEY);
+  return raw === "fr-FR" ||
+    raw === "de-DE" ||
+    raw === "it-IT" ||
+    raw === "pt-PT" ||
+    raw === "es-ES"
+    ? raw
+    : "en-GB";
+}
+
+export function saveLanguage(language: LanguageCode) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(LANGUAGE_KEY, language);
 }

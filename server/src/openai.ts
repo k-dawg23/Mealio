@@ -3,6 +3,7 @@ import { zodTextFormat } from "openai/helpers/zod";
 import { recipesPayloadSchema, type RecipesPayload } from "./types.js";
 
 export type MeasurementSystem = "european" | "american";
+export type LanguageCode = "en-GB" | "fr-FR" | "de-DE" | "it-IT" | "pt-PT" | "es-ES";
 
 function getMeasurementGuidance(system: MeasurementSystem) {
   if (system === "american") {
@@ -12,9 +13,23 @@ function getMeasurementGuidance(system: MeasurementSystem) {
   return "Use European recipe formatting by default. Any weights or volumes should be metric first using g and kg, with cups in brackets only when helpful. Any temperatures should be Celsius first with Fahrenheit in brackets. Counts of items and spoon amounts such as tsp and tbsp are fine.";
 }
 
+function getLanguageGuidance(language: LanguageCode) {
+  const languageMap: Record<LanguageCode, string> = {
+    "en-GB": "English",
+    "fr-FR": "French",
+    "de-DE": "German",
+    "it-IT": "Italian",
+    "pt-PT": "Portuguese from Portugal",
+    "es-ES": "Spanish from Spain"
+  };
+
+  return `Return all recipe-facing text fields in ${languageMap[language]}. Keep the difficulty field in English using only Easy, Medium, or Hard for app compatibility.`;
+}
+
 export async function generateRecipesFromIngredients(
   ingredients: string[],
-  measurementSystem: MeasurementSystem
+  measurementSystem: MeasurementSystem,
+  language: LanguageCode
 ): Promise<RecipesPayload> {
   const apiKey = process.env.OPENAI_API_KEY;
 
@@ -36,7 +51,7 @@ export async function generateRecipesFromIngredients(
           {
             type: "input_text",
             text:
-              `You are Mealio, a practical cooking assistant. Return exactly 4 recipes in JSON. Recipes must be realistic, safe to cook, and use the provided ingredients as the main starting point. Pantry staples like oil, salt, pepper, water, and basic seasonings are allowed. Keep descriptions concise and useful. ${getMeasurementGuidance(measurementSystem)}`
+              `You are Mealio, a practical cooking assistant. Return exactly 4 recipes in JSON. Recipes must be realistic, safe to cook, and use the provided ingredients as the main starting point. Pantry staples like oil, salt, pepper, water, and basic seasonings are allowed. Keep descriptions concise and useful. ${getMeasurementGuidance(measurementSystem)} ${getLanguageGuidance(language)}`
           }
         ]
       },
@@ -45,7 +60,7 @@ export async function generateRecipesFromIngredients(
         content: [
           {
             type: "input_text",
-            text: `Ingredients: ${ingredients.join(", ")}. Measurement preference: ${measurementSystem}.`
+            text: `Ingredients: ${ingredients.join(", ")}. Measurement preference: ${measurementSystem}. Language preference: ${language}.`
           }
         ]
       }

@@ -15,6 +15,7 @@ Mealio is an AI-powered recipe suggestion app built for real use, not just a dem
 - Bookmark recipes in `localStorage`
 - Show recent searches below the ingredient input, keep the latest 20 in localStorage, and allow one-tap reruns with a clear-history option
 - Default recipe measurements to European format with a user switch for European or American recipe output
+- Support six app languages with a persisted flag selector and localized UI labels, buttons, headings, and placeholders
 - Generate recipe photos in the background with loading placeholders, then reuse cached images on later views
 - Cache repeated ingredient combinations on the server to avoid duplicate OpenAI calls
 - Keep the API key server-side only via environment variables
@@ -102,6 +103,21 @@ Mealio also sends the selected recipe measurement preference with each request:
 - `American`: American-style recipe measurements when the user switches formats
 
 The selected format is included in the server cache key so cached European and American responses stay separate.
+
+Mealio also sends the selected app language with each request so recipe titles, descriptions, ingredients, and instructions come back in the chosen language.
+
+## Languages
+
+Mealio supports six languages:
+
+- English (UK)
+- French
+- German
+- Italian
+- Portuguese (Portugal)
+- Spanish (Spain)
+
+The language selector uses flag buttons, remembers the selected language across sessions, and translates the visible UI including headings, labels, buttons, placeholders, tabs, and modal text.
 
 ## Ingredient Comparison
 
