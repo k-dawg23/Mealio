@@ -15,6 +15,12 @@ export interface Recipe {
   requestedIngredients?: string[];
 }
 
+export interface RecentSearchEntry {
+  ingredients: string[];
+  measurementSystem: MeasurementSystem;
+  language: LanguageCode;
+}
+
 export interface RecipeImageState {
   status: RecipeImageStatus;
   imageUrl?: string;

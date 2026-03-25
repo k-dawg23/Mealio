@@ -1,14 +1,15 @@
 import { FormEvent, KeyboardEvent, useState } from "react";
+import { languageOptions } from "../lib/i18n";
 
-import type { MeasurementSystem } from "../lib/types";
+import type { MeasurementSystem, RecentSearchEntry } from "../lib/types";
 
 interface IngredientInputProps {
   ingredients: string[];
   onAddIngredient: (ingredient: string) => void;
   onRemoveIngredient: (ingredient: string) => void;
   onSuggestRecipes: () => void;
-  recentSearches: string[][];
-  onRunRecentSearch: (ingredients: string[]) => void;
+  recentSearches: RecentSearchEntry[];
+  onRunRecentSearch: (search: RecentSearchEntry) => void;
   onClearRecentSearches: () => void;
   isLoading: boolean;
   measurementSystem: MeasurementSystem;
@@ -29,6 +30,9 @@ interface IngredientInputProps {
     recentSearchesCopy: string;
     recentSearchesEmpty: string;
     clearHistory: string;
+    recentSearchFormatEuropeanShort: string;
+    recentSearchFormatAmericanShort: string;
+    recentSearchRestoreLabel: string;
   };
 }
 
@@ -161,12 +165,23 @@ export function IngredientInput({
           <div className="recent-search-list">
             {recentSearches.map((search) => (
               <button
-                key={search.join("|")}
+                key={`${search.ingredients.join("|")}::${search.language}::${search.measurementSystem}`}
                 type="button"
                 className="recent-search-chip"
                 onClick={() => onRunRecentSearch(search)}
+                aria-label={`${copy.recentSearchRestoreLabel}: ${search.ingredients.join(", ")}`}
               >
-                {search.join(", ")}
+                <span className="recent-search-chip-title">{search.ingredients.join(", ")}</span>
+                <span className="recent-search-chip-meta">
+                  <span className="recent-search-chip-badge" aria-hidden="true">
+                    {languageOptions.find((option) => option.code === search.language)?.flag}
+                  </span>
+                  <span className="recent-search-chip-badge">
+                    {search.measurementSystem === "european"
+                      ? copy.recentSearchFormatEuropeanShort
+                      : copy.recentSearchFormatAmericanShort}
+                  </span>
+                </span>
               </button>
             ))}
           </div>

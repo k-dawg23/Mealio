@@ -49,6 +49,19 @@ interface TranslationSet {
   recentSearchesCopy: string;
   recentSearchesEmpty: string;
   clearHistory: string;
+  recentSearchFormatEuropeanShort: string;
+  recentSearchFormatAmericanShort: string;
+  recentSearchRestoreLabel: string;
+  resultsLoadingTitle: string;
+  resultsLoadingCopy: string;
+  resultsErrorTitle: string;
+  resultsErrorCopy: string;
+  resultsRetry: string;
+  resultsStaleError: string;
+  imageLoadingLabel: string;
+  imageUnavailableTitle: string;
+  imageUnavailableCopy: string;
+  imageRetry: string;
   fetchError: string;
 }
 
@@ -109,6 +122,19 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchesCopy: "Tap a previous ingredient combination to run it again.",
     recentSearchesEmpty: "Your last 20 searches will appear here.",
     clearHistory: "Clear history",
+    recentSearchFormatEuropeanShort: "EU",
+    recentSearchFormatAmericanShort: "US",
+    recentSearchRestoreLabel: "Restore search",
+    resultsLoadingTitle: "Finding recipe ideas",
+    resultsLoadingCopy: "Mealio is building four recipes from your ingredients.",
+    resultsErrorTitle: "Recipes could not be refreshed",
+    resultsErrorCopy: "Try the same ingredients again or adjust your basket and rerun the search.",
+    resultsRetry: "Try again",
+    resultsStaleError: "Mealio could not refresh recipes right now. Showing your last results.",
+    imageLoadingLabel: "Generating recipe image",
+    imageUnavailableTitle: "Image unavailable",
+    imageUnavailableCopy: "The recipe is ready even if the photo is not.",
+    imageRetry: "Retry image",
     fetchError: "Something went wrong while suggesting recipes."
   },
   "fr-FR": {
@@ -158,6 +184,19 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchesCopy: "Touchez une combinaison précédente pour la relancer.",
     recentSearchesEmpty: "Vos 20 dernières recherches apparaîtront ici.",
     clearHistory: "Effacer l’historique",
+    recentSearchFormatEuropeanShort: "UE",
+    recentSearchFormatAmericanShort: "US",
+    recentSearchRestoreLabel: "Relancer la recherche",
+    resultsLoadingTitle: "Recherche d’idées de recettes",
+    resultsLoadingCopy: "Mealio prépare quatre recettes à partir de vos ingrédients.",
+    resultsErrorTitle: "Les recettes n’ont pas pu être actualisées",
+    resultsErrorCopy: "Réessayez avec les mêmes ingrédients ou modifiez votre panier puis relancez la recherche.",
+    resultsRetry: "Réessayer",
+    resultsStaleError: "Mealio n’a pas pu actualiser les recettes pour le moment. Les derniers résultats restent affichés.",
+    imageLoadingLabel: "Création de l’image de la recette",
+    imageUnavailableTitle: "Image indisponible",
+    imageUnavailableCopy: "La recette est prête même si la photo ne l’est pas.",
+    imageRetry: "Réessayer l’image",
     fetchError: "Un problème est survenu lors de la suggestion des recettes."
   },
   "de-DE": {
@@ -207,6 +246,19 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchesCopy: "Tippe auf eine frühere Zutatenkombination, um sie erneut auszuführen.",
     recentSearchesEmpty: "Deine letzten 20 Suchen erscheinen hier.",
     clearHistory: "Verlauf löschen",
+    recentSearchFormatEuropeanShort: "EU",
+    recentSearchFormatAmericanShort: "US",
+    recentSearchRestoreLabel: "Suche wiederherstellen",
+    resultsLoadingTitle: "Rezeptideen werden gesucht",
+    resultsLoadingCopy: "Mealio erstellt vier Rezepte aus deinen Zutaten.",
+    resultsErrorTitle: "Rezepte konnten nicht aktualisiert werden",
+    resultsErrorCopy: "Versuche dieselben Zutaten erneut oder passe deinen Vorrat an und starte die Suche noch einmal.",
+    resultsRetry: "Erneut versuchen",
+    resultsStaleError: "Mealio konnte die Rezepte gerade nicht aktualisieren. Die letzten Ergebnisse werden weiter angezeigt.",
+    imageLoadingLabel: "Rezeptbild wird erstellt",
+    imageUnavailableTitle: "Bild nicht verfügbar",
+    imageUnavailableCopy: "Das Rezept ist bereit, auch wenn das Foto fehlt.",
+    imageRetry: "Bild erneut laden",
     fetchError: "Beim Vorschlagen der Rezepte ist ein Fehler aufgetreten."
   },
   "it-IT": {
@@ -256,6 +308,19 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchesCopy: "Tocca una combinazione precedente per ripeterla.",
     recentSearchesEmpty: "Le tue ultime 20 ricerche appariranno qui.",
     clearHistory: "Cancella cronologia",
+    recentSearchFormatEuropeanShort: "EU",
+    recentSearchFormatAmericanShort: "US",
+    recentSearchRestoreLabel: "Ripristina ricerca",
+    resultsLoadingTitle: "Ricerca di idee ricette",
+    resultsLoadingCopy: "Mealio sta preparando quattro ricette dai tuoi ingredienti.",
+    resultsErrorTitle: "Non è stato possibile aggiornare le ricette",
+    resultsErrorCopy: "Riprova con gli stessi ingredienti oppure modifica ciò che hai e rilancia la ricerca.",
+    resultsRetry: "Riprova",
+    resultsStaleError: "Mealio non è riuscito ad aggiornare le ricette in questo momento. Gli ultimi risultati restano visibili.",
+    imageLoadingLabel: "Generazione immagine ricetta",
+    imageUnavailableTitle: "Immagine non disponibile",
+    imageUnavailableCopy: "La ricetta è pronta anche se la foto non lo è.",
+    imageRetry: "Riprova immagine",
     fetchError: "Si è verificato un problema nel suggerire le ricette."
   },
   "pt-PT": {
@@ -305,6 +370,19 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchesCopy: "Toque numa combinação anterior para a voltar a executar.",
     recentSearchesEmpty: "As suas últimas 20 pesquisas aparecerão aqui.",
     clearHistory: "Limpar histórico",
+    recentSearchFormatEuropeanShort: "UE",
+    recentSearchFormatAmericanShort: "US",
+    recentSearchRestoreLabel: "Repor pesquisa",
+    resultsLoadingTitle: "A procurar ideias de receitas",
+    resultsLoadingCopy: "O Mealio está a preparar quatro receitas com os seus ingredientes.",
+    resultsErrorTitle: "Não foi possível atualizar as receitas",
+    resultsErrorCopy: "Tente novamente com os mesmos ingredientes ou ajuste o conjunto e volte a pesquisar.",
+    resultsRetry: "Tentar novamente",
+    resultsStaleError: "O Mealio não conseguiu atualizar as receitas neste momento. Os últimos resultados continuam visíveis.",
+    imageLoadingLabel: "A gerar imagem da receita",
+    imageUnavailableTitle: "Imagem indisponível",
+    imageUnavailableCopy: "A receita está pronta mesmo que a fotografia não esteja.",
+    imageRetry: "Tentar imagem novamente",
     fetchError: "Ocorreu um problema ao sugerir receitas."
   },
   "es-ES": {
@@ -354,6 +432,19 @@ const translations: Record<LanguageCode, TranslationSet> = {
     recentSearchesCopy: "Toca una combinación anterior para volver a ejecutarla.",
     recentSearchesEmpty: "Tus últimas 20 búsquedas aparecerán aquí.",
     clearHistory: "Borrar historial",
+    recentSearchFormatEuropeanShort: "UE",
+    recentSearchFormatAmericanShort: "US",
+    recentSearchRestoreLabel: "Recuperar búsqueda",
+    resultsLoadingTitle: "Buscando ideas de recetas",
+    resultsLoadingCopy: "Mealio está preparando cuatro recetas con tus ingredientes.",
+    resultsErrorTitle: "No se pudieron actualizar las recetas",
+    resultsErrorCopy: "Vuelve a intentarlo con los mismos ingredientes o ajusta tu selección y repite la búsqueda.",
+    resultsRetry: "Intentar de nuevo",
+    resultsStaleError: "Mealio no pudo actualizar las recetas ahora mismo. Se muestran tus últimos resultados.",
+    imageLoadingLabel: "Generando imagen de la receta",
+    imageUnavailableTitle: "Imagen no disponible",
+    imageUnavailableCopy: "La receta está lista aunque la foto no lo esté.",
+    imageRetry: "Reintentar imagen",
     fetchError: "Se produjo un problema al sugerir las recetas."
   }
 };

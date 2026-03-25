@@ -1,5 +1,41 @@
 # PROJECT_HISTORY
 
+## Additional enhancements
+
+### Phase 1
+
+- Restore language and measurement format when rerunning recent searches
+- Cancel in-flight recipe suggestion requests so repeated searches cannot overwrite newer results
+- Improve section-specific loading and error states for recipe suggestions
+- Add clearer recipe image fallback states with a retry path
+
+### Phase 2
+
+- Improve modal accessibility with focus trapping, `Escape` support, and focus restoration
+- Add `aria-live` feedback for loading states and recent-search actions
+- Refine labels and accessible names around dynamic controls and status content
+- Tighten the mobile information hierarchy in the ingredients panel
+
+### Phase 3
+
+- Introduce stable app-generated recipe identity beyond AI-provided ids
+- Add versioned bookmark persistence for safer future migrations
+- Normalize identity rules across bookmarks, image caching, and saved recipe state
+- Harden server-side validation around AI output length and structure
+
+### Phase 4
+
+- Reduce repeated recipe and image state mapping in the client
+- Move translations into a more scalable locale-file structure
+- Add targeted unit tests for ingredient comparison, bookmark matching, recent searches, and language preference behavior
+- Add structured logging hooks for production troubleshooting
+
+### Phase 5
+
+- Explain extra-ingredient logic more clearly in the UI
+- Make pantry-staple assumptions more transparent
+- Improve user-facing transparency when recipe or image generation fails
+
 ## 2026-03-24
 
 ### Project creation
@@ -74,6 +110,15 @@
 - Stored the last 20 ingredient combinations in browser `localStorage`
 - Added de-duplication so repeated ingredient combinations do not create duplicate history entries
 - Added click-to-rerun behavior for previous searches and a clear-history control
+
+## 2026-03-25
+
+### Phase 1 enhancements
+
+- Expanded recent-search storage so each entry now restores the original language and recipe measurement preference when rerun
+- Added cancellation for in-flight recipe suggestion requests so newer searches are not replaced by slower older responses
+- Reworked recipe results states so loading and failure feedback is shown in the suggestions section instead of relying on one generic error banner
+- Added clearer image fallback handling with an explicit unavailable state and retry support in the recipe details modal
 
 ### Recipe images
 
