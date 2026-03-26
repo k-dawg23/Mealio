@@ -77,11 +77,27 @@ The production server serves the built frontend from `dist/client` and exposes t
 ## Deployment Notes
 
 - Keep `OPENAI_API_KEY` in the hosting platform environment settings, never in frontend code.
+- For this cPanel target, use the Node App environment-variable UI to set the real `OPENAI_API_KEY`.
 - Ensure the hosting environment allows Node.js 20+.
+- Confirmed cPanel Node versions available include `20.20.0` and `22.22.0`.
+- Recommended default Node version for Mealio is `20.20.0`.
+- Set `NODE_ENV=production` for hosted runtime.
+- Confirmed working deployment path: local build/package, upload to the cPanel Node app root, then use cPanel `Run NPM Install` and restart the app.
+- During the confirmed deployment, `npm` was not available in SSH and cPanel exposed `Run NPM Install` but not a general `npm run build` command.
 - Recipe data is cached in `server/data/recipe-cache.json`.
 - Generated recipe image metadata is cached in `server/data/recipe-image-cache.json`, and the image files are stored in `server/data/generated-images/`.
 - If the host has ephemeral storage, recipe and image caches may reset between deployments or restarts.
-- A GitHub repository can be created from this folder once network access and Git credentials are available.
+- For cPanel deployments, use the Node App feature and point the startup file to `dist/server/index.js`.
+- Use `npm run preflight:cpanel` to check the current environment when SSH access is available.
+- Use `npm run package:cpanel` to create a local upload bundle if server-side builds are restricted.
+- See `DEPLOYMENT.md` for the full cPanel migration workflow.
+
+Confirmed production validation on cPanel:
+
+- homepage loads successfully
+- recipe generation works
+- image generation works
+- app restart works cleanly
 
 ## OpenAI Integration
 

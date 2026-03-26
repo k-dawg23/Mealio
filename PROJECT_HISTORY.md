@@ -147,6 +147,24 @@
 - Made pantry-staple assumptions explicit in the suggestions view and clearer on recipe cards when no extra shopping is needed
 - Improved generation-failure transparency with friendlier recipe-error messaging, optional technical detail, and clearer image-fallback explanation
 
+## 2026-03-26
+
+### cPanel deployment preparation
+
+- Added a dedicated `DEPLOYMENT.md` guide for cPanel Node App hosting
+- Expanded `.env.example` with `NODE_ENV=production` for hosted runtime clarity
+- Added `npm run preflight:cpanel` for SSH-based environment checks
+- Added `npm run package:cpanel` to build locally and create an upload-ready deployment archive
+- Updated `README.md` deployment notes to document the cPanel runtime, startup file, and helper scripts
+- Documented confirmed cPanel runtime details: Node `20.20.0` and `22.22.0` availability, recommended use of `20.20.0`, and setting the real `OPENAI_API_KEY` directly in the cPanel environment-variable UI
+
+### cPanel deployment confirmation
+
+- Confirmed successful live deployment at `mealio.k-dawg.uk`
+- Confirmed the cPanel Node App runtime works with Node `20.20.0`
+- Confirmed the local-build upload workflow was required because `npm` was not available in SSH and cPanel exposed `Run NPM Install` but not a general build command
+- Confirmed recipe generation, image generation, and restart validation all passed on the live cPanel deployment
+
 ### Recipe images
 
 - Added background recipe image generation using OpenAI `gpt-image-1-mini`

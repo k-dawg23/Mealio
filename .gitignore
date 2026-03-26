@@ -6,3 +6,4 @@ dist
 server/data/recipe-cache.json
 server/data/recipe-image-cache.json
 server/data/generated-images/
+artifacts/
