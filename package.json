@@ -15,7 +15,9 @@
     "build:server": "tsc --project server/tsconfig.json",
     "start": "node dist/server/index.js",
     "check": "tsc --project client/tsconfig.json --noEmit && tsc --project server/tsconfig.json --noEmit",
-    "test": "tsx --test tests/**/*.test.ts"
+    "test": "tsx --test tests/**/*.test.ts",
+    "preflight:cpanel": "bash scripts/cpanel-preflight.sh",
+    "package:cpanel": "bash scripts/package-cpanel-deploy.sh"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
